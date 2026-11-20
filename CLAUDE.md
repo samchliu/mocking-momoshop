@@ -18,6 +18,7 @@
 - **不得**：填寫 `approved_by`；把 draft 改為 approved／active；把 EXP／REF 的內容直接當成規格；修改 `docs/reference/`、已封存的紀錄；執行 `kb seal --reseal`。
 - 程式碼與 REQ／BR 不一致時：**不要**選邊修改，回報 DRIFT 給負責人（`OWNERSHIP.md`）。
 - 規格沒寫到的：不要發明，列為問題回報。
+- 起草或修改的權威文件（REQ／BR／API／ADR），**核准前先跑 `/ambiguity-check <ID>`**（`.claude/skills/ambiguity-check/`）：由乾淨 context 的 subagent 找出需要猜測的地方，只回報、不改文件。
 
 ## 開發流程（SDD：Spec → Test → Code）— 必須遵守
 
