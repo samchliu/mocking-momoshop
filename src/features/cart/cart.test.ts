@@ -1,4 +1,5 @@
-import { cartCount, cartReducer, clampQuantity, emptyCart, parseCart, quantityInCart } from './cart'
+import { clampQuantity } from '@/features/catalog/purchase'
+import { cartCount, cartReducer, emptyCart, parseCart, quantityInCart } from './cart'
 
 describe('BR-003 cart rules', () => {
   it('BR-003#R2 clamps quantity into [1, min(stock, limit)] as an integer', () => {
