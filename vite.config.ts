@@ -42,6 +42,10 @@ export default defineConfig({
   resolve: {
     alias: { '@': new URL('./src', import.meta.url).pathname },
   },
+  server: {
+    // Docker bind mounts on some hosts do not forward fs events; VITE_POLLING=1 opts into polling.
+    watch: process.env.VITE_POLLING === '1' ? { usePolling: true, interval: 300 } : undefined,
+  },
   build: {
     target: 'es2022',
     cssCodeSplit: true,

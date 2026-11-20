@@ -1,0 +1,21 @@
+# dependencies are installed inside the image
+node_modules
+# build / test output
+dist
+coverage
+playwright-report
+test-results
+.lighthouseci
+.vitest
+docs/_build
+# VCS, worktrees, editor, secrets
+.git
+.worktrees
+.husky/_
+.vscode
+.idea
+.DS_Store
+.env
+.env.*
+!.env.example
+*.log
