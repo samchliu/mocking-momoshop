@@ -1,0 +1,23 @@
+.region {
+  position: fixed;
+  inset-inline: 0;
+  bottom: var(--space-6);
+  z-index: 1000;
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+.toast {
+  max-width: min(90vw, 420px);
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-text);
+  color: var(--color-bg);
+  box-shadow: var(--shadow-card);
+  font-size: var(--fs-sm);
+  pointer-events: auto;
+}
+.error {
+  background: var(--color-price);
+}
