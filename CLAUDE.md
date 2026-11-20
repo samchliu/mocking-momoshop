@@ -74,7 +74,7 @@ docs/               知識庫（living-kb）
 - 金額一律整數，用 `lib/money`；顯示用 `formatPrice`（BR-001）。
 - 會改變資料的操作：pending 時停用按鈕、用 `useToast` 回饋、失敗回滾（BR-003）。
 - 非同步畫面用 `<StatusView>`；錯誤訊息用 `toUserMessage`；Modal 用 `<Dialog>`。
-- 樣式只用 `var(--token)`；圖片用 `<SmartImage>`（寬高必填，只有 LCP 圖加 `priority`）；連結用 `<SafeLink>`；首屏以下用 `LazySection`。
+- 樣式只用 CSS module + `var(--token)`，不寫 inline `style`（oxlint `react/forbid-dom-props` 強制；執行期動態值例外，需 `oxlint-disable-next-line` 並註明原因）；圖片用 `<SmartImage>`（寬高必填，只有 LCP 圖加 `priority`）；連結用 `<SafeLink>`；首屏以下用 `LazySection`。
 - 語意化 HTML、可鍵盤操作、觸控目標 ≥ 44px。
 - 禁止 `dangerouslySetInnerHTML`、`eval`；前端不放 secret。
 - 不新增 runtime 依賴，除非 ADR 允許。`memo`／`useMemo` 只在量測證明需要時才加。

@@ -15,6 +15,8 @@ type Props = {
 export function LazySection({ children, minHeight, label }: Props) {
   const { ref, inView } = useInView<HTMLDivElement>()
   return (
+    // minHeight is a caller-supplied runtime value (reserves space to avoid CLS), not a static style
+    // oxlint-disable-next-line react/forbid-dom-props
     <div ref={ref} style={{ minHeight }} aria-label={label}>
       {inView ? <Suspense fallback={null}>{children}</Suspense> : null}
     </div>
