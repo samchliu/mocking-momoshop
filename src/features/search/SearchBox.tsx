@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from 'react-router'
+import { Button, TextInput } from '@/components'
 import { sanitizeQuery } from '@/lib/sanitize'
 import styles from './SearchBox.module.css'
 
@@ -21,7 +22,8 @@ export function SearchBox() {
         navigate(`/search/${encodeURIComponent(q)}`)
       }}
     >
-      <input
+      <TextInput
+        appearance="bare"
         className={styles.input}
         type="search"
         name="q"
@@ -32,9 +34,9 @@ export function SearchBox() {
         enterKeyHint="search"
         autoComplete="off"
       />
-      <button className={styles.button} type="submit">
+      <Button tone="nav" type="submit" className={styles.submit}>
         搜尋
-      </button>
+      </Button>
     </form>
   )
 }
