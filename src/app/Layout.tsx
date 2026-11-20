@@ -1,6 +1,12 @@
+import { lazy, Suspense } from 'react'
 import { Outlet, ScrollRestoration } from 'react-router'
 import { OfflineBanner } from '@/components'
 import { SiteHeader } from './SiteHeader'
+
+const DebugPanel = lazy(() => import('./DebugPanel'))
+// Read once: the panel is a developer/demo tool switched on by `?debug=1` (OPS-001).
+const DEBUG =
+  typeof window !== 'undefined' && new URLSearchParams(window.location.search).get('debug') === '1'
 
 export function Layout() {
   return (
@@ -17,6 +23,11 @@ export function Layout() {
       </main>
       <footer>{/* <SiteFooter /> */}</footer>
       <ScrollRestoration />
+      {DEBUG && (
+        <Suspense fallback={null}>
+          <DebugPanel />
+        </Suspense>
+      )}
     </>
   )
 }

@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { track } from '@/lib/telemetry'
 
 type Props = { children: ReactNode; fallback?: ReactNode; name?: string }
 type State = { hasError: boolean }
@@ -12,6 +13,7 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
+    track({ type: 'error', name: error.name, message: error.message, component: this.props.name })
     if (import.meta.env.DEV) console.error(`[${this.props.name ?? 'section'}]`, error, info)
   }
 
