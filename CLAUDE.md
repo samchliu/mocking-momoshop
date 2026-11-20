@@ -55,8 +55,8 @@ src/
   features/<domain>/  catalog | search | goods | cart | home：query hooks、規則純函式、領域元件、測試
   pages/            路由頁面（lazy），只組裝 features
   components/       無業務共用 UI：SmartImage / SafeLink / LazySection / ErrorBoundary /
-                    StatusView / Spinner / Toast / Dialog / OfflineBanner
-  hooks/            useSearchParamsState / useInView / useOnlineStatus
+                    StatusView / Spinner / Toast / Dialog / OfflineBanner / Button / TextInput
+  hooks/            useSearchParamsState / useInView / useOnlineStatus / useFocusReturn
   lib/              money / format / safeUrl / sanitize / storage / telemetry
   styles/           tokens.css / global.css                                 (integrator)
 docs/               知識庫（living-kb）
@@ -74,6 +74,7 @@ docs/               知識庫（living-kb）
 - 金額一律整數，用 `lib/money`；顯示用 `formatPrice`（BR-001）。
 - 會改變資料的操作：pending 時停用按鈕、用 `useToast` 回饋、失敗回滾（BR-003）。
 - 非同步畫面用 `<StatusView>`；錯誤訊息用 `toUserMessage`；Modal 用 `<Dialog>`。
+- 有文字的按鈕用 `<Button>`（請求進行中傳 `pending`，其他停用原因傳 `disabled`；pending 結束要還原焦點時用 `useFocusReturn`）；text／search／number 輸入框用 `<TextInput>`。純圖示按鈕、其他 input type、textarea、以及 ADR-006 遷移清單標為「不遷」的種類除外（ADR-006）。
 - 樣式只用 CSS module + `var(--token)`，不寫 inline `style`（oxlint `react/forbid-dom-props` 強制；執行期動態值例外，需 `oxlint-disable-next-line` 並註明原因）；圖片用 `<SmartImage>`（寬高必填，只有 LCP 圖加 `priority`）；連結用 `<SafeLink>`；首屏以下用 `LazySection`。
 - 語意化 HTML、可鍵盤操作、觸控目標 ≥ 44px。
 - 禁止 `dangerouslySetInnerHTML`、`eval`；前端不放 secret。

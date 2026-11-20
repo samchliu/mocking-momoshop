@@ -28,6 +28,8 @@ related:
     rel: governed_by
   - id: ADR-005
     rel: governed_by
+  - id: ADR-006
+    rel: governed_by
   - path: src/app/routes.tsx
     rel: implemented_in
 tags: [architecture]
@@ -45,7 +47,7 @@ app/  (routes、providers、layout)
 pages/  ──────────────►  features/<domain>/  ──►  api/  ──►  mock backend
   │ 只組裝，不含業務        │ query hooks、規則純函式、     (唯一網路出口)   (API-001)
   ▼                         │ 領域元件
-components/  ◄──────────────┘  無業務的共用 UI
+components/  ◄──────────────┘  無業務的共用 UI（含 Button、TextInput，ADR-006）
 lib/  純函式（money、format、safeUrl、sanitize、storage）
 ```
 
@@ -53,17 +55,19 @@ lib/  純函式（money、format、safeUrl、sanitize、storage）
 
 ## 元件
 
-| 模組               | 職責                                                            | 對應             |
-| ------------------ | --------------------------------------------------------------- | ---------------- |
-| `app/`             | 路由（lazy route）、QueryClient、Toast、Layout、版頭            | ADR-005          |
-| `api/`             | `request()`：型別 parser、AbortSignal、timeout、統一 `ApiError` | ADR-003          |
-| `api/mock/`        | 確定性 mock 資料與 handler、故障注入                            | API-001、ADR-003 |
-| `features/catalog` | 商品型別與 parser、`ProductCard`、價格顯示規則                  | BR-001           |
-| `features/search`  | URL 條件 ↔ 查詢參數、`useSearchQuery`、篩選／排序／分頁 UI      | REQ-001、BR-002  |
-| `features/goods`   | `useProductQuery`、價格區塊、規格與數量、加入購物車             | REQ-002          |
-| `features/cart`    | `cartReducer`（純函式）、`CartProvider`、樂觀更新與回滾、持久化 | BR-003           |
-| `features/home`    | 輪播、限時搶購（倒數）、商品帶                                  | REQ-003          |
-| `lib/telemetry`    | 事件匯流排：API 指標、錯誤、Web Vitals                          | OPS-001          |
+| 模組               | 職責                                                                                           | 對應             |
+| ------------------ | ---------------------------------------------------------------------------------------------- | ---------------- |
+| `app/`             | 路由（lazy route）、QueryClient、Toast、Layout、版頭                                           | ADR-005          |
+| `api/`             | `request()`：型別 parser、AbortSignal、timeout、統一 `ApiError`                                | ADR-003          |
+| `api/mock/`        | 確定性 mock 資料與 handler、故障注入                                                           | API-001、ADR-003 |
+| `features/catalog` | 商品型別與 parser、`ProductCard`、價格顯示規則                                                 | BR-001           |
+| `features/search`  | URL 條件 ↔ 查詢參數、`useSearchQuery`、篩選／排序／分頁 UI                                     | REQ-001、BR-002  |
+| `features/goods`   | `useProductQuery`、價格區塊、規格與數量、加入購物車                                            | REQ-002          |
+| `features/cart`    | `cartReducer`（純函式）、`CartProvider`、樂觀更新與回滾、持久化                                | BR-003           |
+| `features/home`    | 輪播、限時搶購（倒數）、商品帶                                                                 | REQ-003          |
+| `lib/telemetry`    | 事件匯流排：API 指標、錯誤、Web Vitals                                                         | OPS-001          |
+| `components/`      | 無業務共用 UI；基礎互動元件 `Button`、`TextInput`                                              | ADR-006          |
+| `hooks/`           | `useSearchParamsState`、`useInView`、`useOnlineStatus`、`useFocusReturn`（pending 後還原焦點） | ADR-006          |
 
 ## 資料流
 
@@ -107,7 +111,7 @@ lib/  純函式（money、format、safeUrl、sanitize、storage）
 
 ## 相關 ADR
 
-ADR-001、ADR-002、ADR-003、ADR-004、ADR-005
+ADR-001、ADR-002、ADR-003、ADR-004、ADR-005、ADR-006
 
 ## 規劃中（尚未實作）
 
@@ -116,6 +120,7 @@ ADR-001、ADR-002、ADR-003、ADR-004、ADR-005
 
 ## 變更歷史
 
-| 日期       | 變更          |
-| ---------- | ------------- |
-| 2026-11-20 | 建立（draft） |
+| 日期       | 變更                                                                                                    |
+| ---------- | ------------------------------------------------------------------------------------------------------- |
+| 2026-11-20 | 建立（draft）                                                                                           |
+| 2026-11-20 | 依 ADR-006：`components/` 新增 Button、TextInput；`hooks/` 新增 useFocusReturn（AI 提議，待 RD review） |
