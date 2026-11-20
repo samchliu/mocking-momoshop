@@ -1,0 +1,3 @@
+# Sealed originals (REF / CLR / RPT) change only with the record owner's approval.
+# Replace @pm with the real handle from OWNERSHIP.md.
+/docs/**/_originals/ @pm

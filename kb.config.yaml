@@ -1,0 +1,21 @@
+# kb.config.yaml - created by `kb init`.
+# Every available key, with comments: node_modules/living-kb/kb.config.yaml
+# Inspect the merged result: npx kb config
+
+extends:
+  - kb:personal
+
+# lang: zh-TW
+# src: docs
+# ownership: OWNERSHIP.md
+
+ai_context:
+  instructions:
+    - '實作前先讀本檔「團隊／組織規範」中的 CLAUDE.md；檔案範圍以任務指派為準，超出範圍的修改先回報。'
+    - '測試名稱必須包含對應的知識 ID（例：`REQ-001#AC2`、`BR-002#R5`），`npm run spec:check` 會檢查。'
+    - '完成定義：`npm run verify` 全綠。回報修改檔案、假設，以及任何與規格不一致之處。'
+  include:
+    - CLAUDE.md
+
+# 測試與建置產物不是程式碼來源，避免 `kb validate --code-root .` 掃描
+skip_dirs: [coverage, playwright-report, test-results, .lighthouseci, dist, .worktrees]
