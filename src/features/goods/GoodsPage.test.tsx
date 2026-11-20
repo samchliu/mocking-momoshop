@@ -119,6 +119,17 @@ describe('GoodsPage (REQ-002)', () => {
     expect(cartPosts(fetchSpy)).toHaveLength(1)
   })
 
+  it('ADR-006 BR-003#R4 以鍵盤加入購物車，請求完成後焦點回到「放入購物車」', async () => {
+    window.history.replaceState(null, '', '/?latency=50')
+    await open(DEMO.simpleProduct)
+    addButton().focus()
+    await userEvent.keyboard('{Enter}')
+    expect(addButton()).toHaveAttribute('aria-busy', 'true')
+    expect(await screen.findByText('已加入購物車')).toBeInTheDocument()
+    await waitFor(() => expect(addButton()).toBeEnabled())
+    expect(addButton()).toHaveFocus()
+  })
+
   it('REQ-002#AC4 BR-003#R5 failure explains why and keeps the header count', async () => {
     await open(DEMO.variantProduct)
     await userEvent.click(screen.getByRole('radio', { name: /512GB/ })) // stock 2, limit 2

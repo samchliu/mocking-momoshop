@@ -255,25 +255,6 @@
     padding: 0;
   }
 }
-.addButton {
-  width: 100%;
-  min-height: 48px;
-  border: 0;
-  border-radius: 0;
-  background: var(--color-cart); /* the real site's 放入購物車 is blue; pink is 直接購買 */
-  color: var(--color-brand-contrast);
-  font-size: var(--fs-lg);
-  font-weight: 600;
-  cursor: pointer;
-}
-.addButton:disabled {
-  background: var(--color-border);
-  color: var(--color-text-muted);
-  cursor: not-allowed;
-}
-.addButton[aria-busy='true'] {
-  cursor: progress;
-}
 
 /* not found */
 .notFound {

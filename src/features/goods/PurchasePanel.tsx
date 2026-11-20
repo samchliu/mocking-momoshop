@@ -1,6 +1,8 @@
 import { useId, useRef, useState } from 'react'
 import { Link } from 'react-router'
+import { Button } from '@/components'
 import { clampQuantity, type ProductDetail } from '@/features/catalog'
+import { useFocusReturn } from '@/hooks/useFocusReturn'
 import { PriceBlock } from './PriceBlock'
 import { quantityFromInput, resolveSelection } from './selection'
 import styles from './Goods.module.css'
@@ -25,6 +27,8 @@ export function PurchasePanel({ product, onAdd, isAdding }: Props) {
   const [draft, setDraft] = useState<string | null>(null)
   const [attempted, setAttempted] = useState(false)
   const variantsRef = useRef<HTMLFieldSetElement>(null)
+  const addRef = useRef<HTMLButtonElement>(null)
+  const captureAddFocus = useFocusReturn(addRef, isAdding) // knowledge: ADR-006 focus return
   const ids = useId()
 
   // Derived at render (no effects): price, stock and limits follow the chosen variant.
@@ -165,15 +169,20 @@ export function PurchasePanel({ product, onAdd, isAdding }: Props) {
 
       <div className={styles.actions}>
         {/* knowledge: REQ-002#AC4 BR-003#R4 (disabled while pending), REQ-002#AC5 BR-003#R3 (sold out) */}
-        <button
-          type="button"
-          className={styles.addButton}
-          disabled={isAdding || sel.soldOut}
-          aria-busy={isAdding || undefined}
-          onClick={handleAdd}
+        <Button
+          ref={addRef}
+          tone="cart"
+          size="lg"
+          fullWidth
+          pending={isAdding}
+          disabled={sel.soldOut}
+          onClick={() => {
+            captureAddFocus()
+            handleAdd()
+          }}
         >
           {sel.soldOut ? '已售完' : '放入購物車'}
-        </button>
+        </Button>
       </div>
     </div>
   )
