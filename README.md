@@ -48,11 +48,11 @@ docker compose down         # 停止（加 -v 會一併清除容器內的 node_m
 建議閱讀順序：
 
 1. **題目與範圍**：[REF-001 題目摘要](docs/reference/REF-001.md) → [EXP-001 選題與範圍探索](docs/exploration/EXP-001.md)
-2. **要做什麼**：[REQ-001 搜尋](docs/requirements/REQ-001.md)、[REQ-002 商品頁](docs/requirements/REQ-002.md)、[REQ-003 首頁](docs/requirements/REQ-003.md)
+2. **要做什麼**：[REQ-001 搜尋](docs/requirements/REQ-001.md)、[REQ-002 商品頁](docs/requirements/REQ-002.md)、[REQ-003 首頁](docs/requirements/REQ-003.md)、[REQ-004 全站版面骨架](docs/requirements/REQ-004.md)；變更走 [CR-001](docs/change-requests/CR-001.md)
 3. **必須成立的規則**：[BR-001 價格](docs/business-rules/BR-001.md)、[BR-002 搜尋](docs/business-rules/BR-002.md)、[BR-003 購物車](docs/business-rules/BR-003.md)
 4. **怎麼做、為什麼**：[ARCH-001](docs/architecture/ARCH-001.md)、[ADR-001～005](docs/decisions/)、[API-001](docs/api/API-001.md)
 5. **怎麼驗證與觀測**：[OPS-001](docs/operations/OPS-001.md)
-6. **人機協作與差異分析**：[RPT-001 Agent 協作紀錄](docs/records/RPT-001.md)、RPT-002 實作與實站差異
+6. **人機協作與差異分析**：[RPT-001 實作階段的 agent 協作](docs/records/RPT-001.md)、[RPT-003 規格階段的歧義檢查](docs/records/RPT-003.md)、[RPT-002 實作與實站差異](docs/records/RPT-002.md)
 
 或執行 `npm run kb:build`，閱讀 `docs/_build/features/REQ-xxx/overview.md`（單頁功能總覽）。
 
@@ -74,33 +74,35 @@ app (routes, providers) → pages → features/{search, goods, cart, home, catal
 ## 人機協作架構（Human-Agent Iteration）
 
 ```
-人：探索 → 升級為 REQ / BR / ADR（人核准）
+AI：起草 REQ / BR / API / ADR（draft）
+    → /ambiguity-check：乾淨 context 的 subagent 找出需要猜測的地方（只回報）
+人：決定答案 → AI 回填 → 人核准（npm run approve）
           → kb build → ai-context.md（只含已決定的知識）
 AI：先寫測試（名稱含 REQ-001#AC2）→ 實作
 閘門：npm run verify（含 kb validate 與知識↔測試追溯）→ 人 review → 合併 → 錯誤記入 RPT-001
 ```
 
-詳見 [ADR-004](docs/decisions/ADR-004.md)。
+詳見 [ADR-004](docs/decisions/ADR-004.md)；核准前檢查的實際效果見 [RPT-003](docs/records/RPT-003.md)（7 份文件、119 處在核准前被找出，其中 3 處矛盾是 AI 自己回填時引入的）。
 
 ## 優先順序與刻意不做
 
-| 優先     | 內容                                                                     |
-| -------- | ------------------------------------------------------------------------ |
-| P0       | 搜尋（排序、品牌篩選、價格區間、分頁、URL 狀態）、商品頁、加入購物車     |
-| P1       | 錯誤／空狀態細節、首頁（輪播、限時搶購、商品帶）、舊網址相容             |
-| 刻意不做 | `/discover`、`/live`、購物車頁與結帳、會員、屬性篩選（尺寸、容量…）、SSR |
+| 優先     | 內容                                                                                                     |
+| -------- | -------------------------------------------------------------------------------------------------------- |
+| P0       | 搜尋（排序、品牌篩選、價格區間、分頁、URL 狀態）、商品頁（含資訊表、詳情分頁）、加入購物車、全站版面骨架 |
+| P1       | 錯誤／空狀態細節、首頁（輪播、限時搶購、商品帶）、舊網址相容                                             |
+| 刻意不做 | `/discover`、`/live`、購物車頁與結帳、會員與頂端工具列、屬性篩選（尺寸、容量…）、熱門推薦、SSR           |
 
 每一項「不做」的理由寫在對應 REQ 的「不在範圍內」。
 
 ## 品質報告
 
-| 項目                                      | 結果                                                                              |
-| ----------------------------------------- | --------------------------------------------------------------------------------- |
-| Lighthouse（首頁、搜尋、商品頁，desktop） | Performance／A11y／Best Practices／SEO 皆 **100**；LCP ≈ 0.5s、CLS ≤ 0.003、TBT 0 |
-| 單元／元件測試                            | 174 passed                                                                        |
-| E2E（desktop + mobile）                   | 32 passed，含慢速網路骨架、頁碼修正、加入購物車                                   |
-| 知識↔測試追溯（`spec:check`）             | REQ-001 7/7、REQ-002 7/7、REQ-003 4/4；BR-001～003 每條規則皆有測試               |
-| 入口 bundle                               | gzip 75.6 kB；各頁 chunk ≤ 3.2 kB；mock 資料延遲載入                              |
+| 項目                                      | 結果                                                                                         |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------- |
+| Lighthouse（首頁、搜尋、商品頁，desktop） | Performance／A11y／Best Practices／SEO 皆 **100**；LCP ≈ 0.5s、CLS ≤ 0.003、TBT 0            |
+| 單元／元件測試                            | 207 passed                                                                                   |
+| E2E（desktop + mobile）                   | 37 passed（1 skipped：容器寬度只量 desktop），含慢速網路骨架、頁碼修正、加入購物車、版面量測 |
+| 知識↔測試追溯（`spec:check`）             | REQ-001 9/9、REQ-002 11/11、REQ-003 4/4、REQ-004 5/5；BR-001～003 每條規則皆有測試           |
+| 入口 bundle                               | gzip 75.9 kB；各頁 chunk ≤ 3.7 kB；mock 資料延遲載入                                         |
 
 詳見 [RPT-002](docs/records/RPT-002.md)（含與實站逐項差異）。
 
@@ -109,7 +111,7 @@ AI：先寫測試（名稱含 REQ-001#AC2）→ 實作
 - 純前端 mock：資料為固定種子產生，圖片為 inline SVG；Lighthouse 數字不代表真實網路與圖片下的表現。
 - 只有 CSR：搜尋與商品頁沒有 SSR／SSG，SEO 依賴爬蟲執行 JS（取捨見 [ADR-001](docs/decisions/ADR-001.md)）。
 - 購物車只存在 localStorage，沒有購物車頁與結帳；伺服端限購檢查只在 mock 中。
-- 6 個規格缺口已由 agent 回報、等待決定（[RPT-001 結論](docs/records/RPT-001.md)），目前行為已記錄。
+- 實作時 agent 回報的 6 個規格缺口已全部定案並寫入 REQ-001～003、ADR-005（[RPT-001](docs/records/RPT-001.md)），目前沒有待決定的規格問題。
 
 ## 明天上線，我最擔心的三件事
 
