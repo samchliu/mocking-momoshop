@@ -1,0 +1,6 @@
+# SDD gate: only green code gets committed (see CLAUDE.md「Git 與分支流程」)
+npx --no -- lint-staged
+npm run --silent lint
+npm run --silent typecheck
+npm run --silent test -- --reporter=dot
+npx --no -- kb validate --code-root . > /dev/null || npx --no -- kb validate --code-root .
