@@ -1,6 +1,6 @@
 # Mock momoshop
 
-純前端的 momo 電商 mock：**搜尋 → 商品 → 加入購物車**，加上首頁。重點不在畫面還原，而在於一個**可以被長期維護、可以讓 AI agent 安全地持續演進**的前端系統。
+純前端的 momo 電商 mock：**搜尋 → 商品 → 加入購物車 → 購物車頁**，加上首頁。重點不在畫面還原，而在於一個**可以被長期維護、可以讓 AI agent 安全地持續演進**的前端系統。
 
 > 我把自己定位成這個系統的長期維護者。所以需求、規則、決策都放在 `docs/` 的知識庫（[living-kb](https://github.com/samchliu/living-kb)），和程式碼一起演進、一起被驗證。
 
@@ -28,6 +28,7 @@ docker compose down         # 停止（加 -v 會一併清除容器內的 node_m
 | -------------- | ------------------------------------------------------------------------------------------------- |
 | 搜尋           | `/search/iphone?sort=price_asc&brand=Apple`                                                       |
 | 商品           | `/goods/P10001`（多規格）、`/goods/P10003`（售完）；舊網址 `/goods/GoodsDetail.jsp?i_code=P10002` |
+| 購物車         | `/cart`（先在商品頁加入；售完、下架、超過庫存的品項見 REQ-006）                                   |
 | 慢速網路       | 任一頁加 `?latency=3000`                                                                          |
 | 30% 請求失敗   | `?fail=0.3`                                                                                       |
 | 離線           | `?offline=1`                                                                                      |
@@ -50,11 +51,11 @@ CI（`.github/workflows/ci.yml`）在 push 到 main 與每個 PR 上跑同一套
 建議閱讀順序：
 
 1. **題目與範圍**：[REF-001 題目摘要](docs/reference/REF-001.md) → [EXP-001 選題與範圍探索](docs/exploration/EXP-001.md)
-2. **要做什麼**：[REQ-001 搜尋](docs/requirements/REQ-001.md)、[REQ-002 商品頁](docs/requirements/REQ-002.md)、[REQ-003 首頁](docs/requirements/REQ-003.md)、[REQ-004 全站版面骨架](docs/requirements/REQ-004.md)；變更走 [CR-001](docs/change-requests/CR-001.md)
-3. **必須成立的規則**：[BR-001 價格](docs/business-rules/BR-001.md)、[BR-002 搜尋](docs/business-rules/BR-002.md)、[BR-003 購物車](docs/business-rules/BR-003.md)
+2. **要做什麼**：[REQ-001 搜尋](docs/requirements/REQ-001.md)、[REQ-002 商品頁](docs/requirements/REQ-002.md)、[REQ-003 首頁](docs/requirements/REQ-003.md)、[REQ-004 全站版面骨架](docs/requirements/REQ-004.md)、[REQ-005 固定版頭與首頁商品流](docs/requirements/REQ-005.md)、[REQ-006 購物車頁](docs/requirements/REQ-006.md)；變更走 [CR-001～004](docs/change-requests/)
+3. **必須成立的規則**：[BR-001 價格](docs/business-rules/BR-001.md)、[BR-002 搜尋](docs/business-rules/BR-002.md)、[BR-003 加入購物車](docs/business-rules/BR-003.md)、[BR-004 購物車編輯與金額](docs/business-rules/BR-004.md)
 4. **怎麼做、為什麼**：[ARCH-001](docs/architecture/ARCH-001.md)、[ADR-001～005](docs/decisions/)、[API-001](docs/api/API-001.md)
 5. **怎麼驗證與觀測**：[OPS-001](docs/operations/OPS-001.md)
-6. **人機協作與差異分析**：[RPT-001 實作階段的 agent 協作](docs/records/RPT-001.md)、[RPT-003 規格階段的歧義檢查](docs/records/RPT-003.md)、[RPT-002 實作與實站差異](docs/records/RPT-002.md)
+6. **人機協作與差異分析**：[RPT-001 實作階段的 agent 協作](docs/records/RPT-001.md)、[RPT-003 規格階段的歧義檢查](docs/records/RPT-003.md)、[RPT-004 購物車頁（追加）的協作紀錄](docs/records/RPT-004.md)、[RPT-002 實作與實站差異](docs/records/RPT-002.md)
 
 或執行 `npm run kb:build`，閱讀 `docs/_build/features/REQ-xxx/overview.md`（單頁功能總覽）。
 
@@ -65,11 +66,12 @@ app (routes, providers) → pages → features/{search, goods, cart, home, catal
                                         ↘ components（無業務 UI）  ↘ lib（money, telemetry…）
 ```
 
-| 狀態           | 放在                              | 理由                             |
-| -------------- | --------------------------------- | -------------------------------- |
-| 搜尋結果、商品 | TanStack Query                    | 快取、去重、切換條件時取消舊請求 |
-| 搜尋條件       | URL                               | 可分享、重新整理不遺失           |
-| 購物車         | Context + reducer（localStorage） | 純函式可測試，樂觀更新可回滾     |
+| 狀態               | 放在                                                 | 理由                                                           |
+| ------------------ | ---------------------------------------------------- | -------------------------------------------------------------- |
+| 搜尋結果、商品     | TanStack Query                                       | 快取、去重、切換條件時取消舊請求                               |
+| 搜尋條件           | URL                                                  | 可分享、重新整理不遺失                                         |
+| 購物車             | Context + reducer（localStorage）                    | 純函式可測試，樂觀更新可回滾                                   |
+| 購物車頁的商品資料 | TanStack Query（每個商品一個請求，每次進入重新請求） | 庫存與價格以當下為準；品項狀態、金額在 render 時計算（BR-004） |
 
 詳見 [ARCH-001](docs/architecture/ARCH-001.md) 與 [ADR-002](docs/decisions/ADR-002.md)。
 
@@ -92,19 +94,20 @@ AI：先寫測試（名稱含 REQ-001#AC2）→ 實作
 | -------- | -------------------------------------------------------------------------------------------------------- |
 | P0       | 搜尋（排序、品牌篩選、價格區間、分頁、URL 狀態）、商品頁（含資訊表、詳情分頁）、加入購物車、全站版面骨架 |
 | P1       | 錯誤／空狀態細節、首頁（輪播、限時搶購、商品帶）、舊網址相容                                             |
-| 刻意不做 | `/discover`、`/live`、購物車頁與結帳、會員與頂端工具列、屬性篩選（尺寸、容量…）、熱門推薦、SSR           |
+| 追加     | 購物車頁（REQ-006、BR-004）：在核心範圍完成之後、約 120 分鐘時間窗之外加入，過程見 RPT-004               |
+| 刻意不做 | `/discover`、`/live`、結帳、會員與頂端工具列、屬性篩選（尺寸、容量…）、熱門推薦、SSR                     |
 
 每一項「不做」的理由寫在對應 REQ 的「不在範圍內」。
 
 ## 品質報告
 
-| 項目                                      | 結果                                                                                                                                       |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Lighthouse（首頁、搜尋、商品頁，desktop） | Performance／A11y／Best Practices／SEO 皆 **100**；LCP ≈ 0.5s、CLS ≤ 0.003、TBT 0                                                          |
-| 單元／元件測試                            | 267 passed                                                                                                                                 |
-| E2E（desktop + mobile）                   | 58 passed（6 skipped：版面寬度、商品流虛擬化、返回還原只量 desktop），含慢速網路骨架、頁碼修正、加入購物車、版面量測、固定版頭、無限商品流 |
-| 知識↔測試追溯（`spec:check`）             | REQ-001 9/9、REQ-002 11/11、REQ-003 4/4、REQ-004 5/5、REQ-005 12/12；BR-001～003 每條規則皆有測試                                          |
-| 入口 bundle                               | 入口 chunk gzip 75.6 kB（含 modulepreload 的共用 chunk 共 125.9 kB）；頁面 chunk ≤ 5.9 kB（首頁）；mock 資料延遲載入                       |
+| 項目                                      | 結果                                                                                                                                                 |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lighthouse（首頁、搜尋、商品頁，desktop） | Performance／A11y／Best Practices／SEO 皆 **100**；LCP ≈ 0.5s、CLS ≤ 0.003、TBT 0                                                                    |
+| 單元／元件測試                            | 295 passed                                                                                                                                           |
+| E2E（desktop + mobile）                   | 60 passed（6 skipped：版面寬度、商品流虛擬化、返回還原只量 desktop），含慢速網路骨架、頁碼修正、加入購物車、版面量測、固定版頭、無限商品流、購物車頁 |
+| 知識↔測試追溯（`spec:check`）             | REQ-001 9/9、REQ-002 11/11、REQ-003 4/4、REQ-004 5/5、REQ-005 12/12、REQ-006 12/12；BR-001～004 每條規則皆有測試（全量 84/84）                       |
+| 入口 bundle                               | 入口 chunk gzip 76.8 kB（含 modulepreload 的共用 chunk 共 126.6 kB）；頁面 chunk ≤ 5.9 kB（首頁；購物車頁 4.6 kB）；mock 資料延遲載入                |
 
 詳見 [RPT-002](docs/records/RPT-002.md)（含與實站逐項差異）。
 
@@ -112,7 +115,9 @@ AI：先寫測試（名稱含 REQ-001#AC2）→ 實作
 
 - 純前端 mock：資料為固定種子產生，圖片為 inline SVG；Lighthouse 數字不代表真實網路與圖片下的表現。
 - 只有 CSR：搜尋與商品頁沒有 SSR／SSG，SEO 依賴爬蟲執行 JS（取捨見 [ADR-001](docs/decisions/ADR-001.md)）。
-- 購物車只存在 localStorage，沒有購物車頁與結帳；伺服端限購檢查只在 mock 中。
+- 購物車只存在 localStorage；購物車頁的改數量與移除不呼叫 API、不同步其他分頁（BR-004#R3），沒有結帳；伺服端限購檢查只在 mock 中。
+- Lighthouse 只量首頁、搜尋、商品頁；購物車頁未納入 LHCI。
+- 購物車頁的規格修正後沒有重跑歧義檢查就核准（時間考量，見 RPT-004）。
 - 實作時 agent 回報的 6 個規格缺口已全部定案並寫入 REQ-001～003、ADR-005（[RPT-001](docs/records/RPT-001.md)），目前沒有待決定的規格問題。
 
 ## 明天上線，我最擔心的三件事
@@ -144,4 +149,4 @@ AI：先寫測試（名稱含 REQ-001#AC2）→ 實作
 | 購物車在 localStorage（BR-003） | 有登入，或重複加入／超過限購出現在數據中                     |
 | 不新增 runtime 依賴             | 自行實作的部分（vitals、虛擬化、sink）出現第 2 個同類 bug    |
 
-門檻數字為提議值，待負責人定案；其餘方向（購物車頁、屬性篩選、SSR、契約測試、開發流程改善）為何不排在上線前，見 ARCH-002 第 4 節。
+門檻數字為提議值，待負責人定案；其餘方向（結帳、屬性篩選、SSR、契約測試、開發流程改善）為何不排在上線前，見 ARCH-002 第 4 節。
