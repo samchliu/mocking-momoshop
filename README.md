@@ -43,6 +43,8 @@ docker compose down         # 停止（加 -v 會一併清除容器內的 node_m
 | `npm run kb:build`        | 產生知識庫的閱讀產物（`docs/_build/`）                                   |
 | `npm run kb:trace BR-002` | 查某條規則的上下游（需求、決策、程式碼、測試）                           |
 
+CI（`.github/workflows/ci.yml`）在 push 到 main 與每個 PR 上跑同一套關卡：`verify`（含 `kb validate --strict`）通過後，平行執行 e2e 與 Lighthouse 預算檢查；失敗時上傳 Playwright 報告。
+
 ## 怎麼讀這個專案
 
 建議閱讀順序：

@@ -21,7 +21,7 @@
     "audit": "npm audit --omit=dev",
     "verify": "npm run kb:validate && npm run typecheck && npm run lint && npm run format:check && npm run spec:check && npm run test",
     "spec:check": "node scripts/spec-check.mjs",
-    "kb:validate": "kb validate --code-root .",
+    "kb:validate": "kb validate --strict --code-root .",
     "kb:build": "kb build",
     "kb:trace": "kb trace",
     "approve": "node scripts/approve.mjs",
