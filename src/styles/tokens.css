@@ -55,7 +55,10 @@
   /* layout */
   --container-max: 1220px; /* REQ-004 */
   --container-gutter: 16px; /* outer margin each side when the viewport is narrower */
-  --header-h: 64px;
+  --header-h: 64px; /* header first row = collapsed header height (REQ-005) */
+  --cat-nav-h: 45px; /* category nav incl. 1px top border, no scrollbar (REQ-005) */
+  --header-h-expanded: calc(var(--header-h) + var(--cat-nav-h)); /* 109px (REQ-005) */
+  --z-header: 50; /* below skip link (100), toast (1000); <dialog> uses the top layer */
   /* knowledge: REQ-005 商品流規格「卡片高度」 — mirrored by FEED_LAYOUT (features/home/feedLayout.ts) */
   --feed-card-h-wide: 380px;
   --feed-card-h-compact: 320px;
