@@ -10,6 +10,8 @@ created: 2026-11-20
 updated: 2026-11-20
 source_of_truth: self
 related:
+  - id: REQ-002
+    rel: implements
   - id: ARCH-001
     rel: relates_to
   - id: ADR-001
