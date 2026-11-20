@@ -1,0 +1,25 @@
+.home,
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding-top: var(--space-4);
+}
+.skHero,
+.skKeywords,
+.skFlash {
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+}
+/* Same box as the carousel: 3:1 banner + 44px control bar. */
+.skHero {
+  box-sizing: content-box;
+  aspect-ratio: 3 / 1;
+  padding-bottom: 44px;
+}
+.skKeywords {
+  height: 52px;
+}
+.skFlash {
+  height: 360px;
+}
