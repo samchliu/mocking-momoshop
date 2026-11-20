@@ -15,14 +15,14 @@ npm run dev                 # http://localhost:5173
 
 不需要環境變數：資料來自 repo 內的 mock 後端（[ADR-003](docs/decisions/ADR-003.md)），不呼叫任何真實網站 API。
 
-| 試試看         | 網址                                                                |
-| -------------- | ------------------------------------------------------------------- |
-| 搜尋           | `/search/iphone?sort=price_asc&brand=Apple`                         |
-| 商品           | `/goods/<id>`（舊網址 `/goods/GoodsDetail.jsp?i_code=<id>` 也可以） |
-| 慢速網路       | 任一頁加 `?latency=3000`                                            |
-| 30% 請求失敗   | `?fail=0.3`                                                         |
-| 離線           | `?offline=1`                                                        |
-| 觀察 telemetry | `?debug=1`                                                          |
+| 試試看         | 網址                                                                                              |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| 搜尋           | `/search/iphone?sort=price_asc&brand=Apple`                                                       |
+| 商品           | `/goods/P10001`（多規格）、`/goods/P10003`（售完）；舊網址 `/goods/GoodsDetail.jsp?i_code=P10002` |
+| 慢速網路       | 任一頁加 `?latency=3000`                                                                          |
+| 30% 請求失敗   | `?fail=0.3`                                                                                       |
+| 離線           | `?offline=1`                                                                                      |
+| 觀察 telemetry | `?debug=1`                                                                                        |
 
 ## 指令
 
@@ -85,12 +85,35 @@ AI：先寫測試（名稱含 REQ-001#AC2）→ 實作
 
 ## 品質報告
 
-（Phase 2 結束後填寫：知識↔測試追溯、測試數、E2E、Lighthouse、bundle 大小）
+| 項目                                      | 結果                                                                              |
+| ----------------------------------------- | --------------------------------------------------------------------------------- |
+| Lighthouse（首頁、搜尋、商品頁，desktop） | Performance／A11y／Best Practices／SEO 皆 **100**；LCP ≈ 0.5s、CLS ≤ 0.003、TBT 0 |
+| 單元／元件測試                            | 174 passed                                                                        |
+| E2E（desktop + mobile）                   | 32 passed，含慢速網路骨架、頁碼修正、加入購物車                                   |
+| 知識↔測試追溯（`spec:check`）             | REQ-001 7/7、REQ-002 7/7、REQ-003 4/4；BR-001～003 每條規則皆有測試               |
+| 入口 bundle                               | gzip 75.6 kB；各頁 chunk ≤ 3.2 kB；mock 資料延遲載入                              |
+
+詳見 [RPT-002](docs/records/RPT-002.md)（含與實站逐項差異）。
 
 ## 已知限制
 
-（Phase 2 結束後填寫）
+- 純前端 mock：資料為固定種子產生，圖片為 inline SVG；Lighthouse 數字不代表真實網路與圖片下的表現。
+- 只有 CSR：搜尋與商品頁沒有 SSR／SSG，SEO 依賴爬蟲執行 JS（取捨見 [ADR-001](docs/decisions/ADR-001.md)）。
+- 購物車只存在 localStorage，沒有購物車頁與結帳；伺服端限購檢查只在 mock 中。
+- 6 個規格缺口已由 agent 回報、等待決定（[RPT-001 結論](docs/records/RPT-001.md)），目前行為已記錄。
+
+## 明天上線，我最擔心的三件事
+
+1. **伺服端規則與前端不一致**：BR-002（搜尋）、BR-003（限購）現在由 mock 執行；接真實後端時，若後端規則不同，前端會顯示錯誤的件數或允許超量。→ 用 API-001 + 同一組 BR 測試案例做契約測試。
+2. **真實圖片下的 LCP**：目前 LCP 0.5s 建立在 inline SVG 上。→ 上線前要有 `srcset`／CDN 圖片尺寸，並在 mobile 4G 條件下量測。
+3. **觀測只到瀏覽器內**：telemetry 目前只輸出到 console 與 `?debug=1` 面板。→ 需要收集端點、取樣率與 PII 遮罩（OPS-001「上線前需要補上」）。
 
 ## 後續演進方向
 
-（Phase 2 結束後填寫）
+| 方向         | 做法                                                                                           | 依據                 |
+| ------------ | ---------------------------------------------------------------------------------------------- | -------------------- |
+| 接真實後端   | 設定 `VITE_API_BASE_URL`；parser 已驗證每個回應，契約變更會在邊界被擋下                        | API-001、ADR-003     |
+| SEO 與首屏   | 搜尋／商品頁改為 SSR 或預渲染（路由與資料層已分離，可漸進遷移）                                | ADR-001              |
+| 規格補完     | 屬性篩選、評價排序、購物車頁與結帳；先寫 REQ／BR，再派 agent                                   | REQ 的「不在範圍內」 |
+| 人機協作加嚴 | commitlint 檢查知識 ID 必須存在；`spec:check --strict` 進 CI；agent 回報的規格缺口自動開 issue | RPT-001 後續         |
+| 觀測上線     | `subscribe()` 接 sendBeacon／Sentry；Web Vitals 依路由分組                                     | OPS-001              |
