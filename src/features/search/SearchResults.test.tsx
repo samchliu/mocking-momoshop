@@ -182,3 +182,35 @@ describe('SearchResults (REQ-001)', () => {
     expect(cardNames()).toEqual(expected)
   })
 })
+
+describe('SearchResults URL edge cases (REQ-001 v3)', () => {
+  afterEach(() => vi.restoreAllMocks())
+
+  it('REQ-001#AC8 blank keyword: only the heading, no request, query ignored', async () => {
+    const fetchSpy = vi.spyOn(await import('@/api/mock'), 'mockFetch')
+    const { router } = renderRoute('/search/%20?page=3&brand=Apple')
+    expect(await screen.findByRole('heading', { level: 1 })).toHaveTextContent('請輸入搜尋關鍵字')
+    expect(screen.queryByRole('list', { name: '搜尋結果' })).toBeNull()
+    expect(screen.queryByRole('navigation', { name: '分頁' })).toBeNull()
+    expect(screen.queryByText(/共 \d+ 件商品/)).toBeNull()
+    expect(fetchSpy.mock.calls.filter(([p]) => String(p).startsWith('/api/search'))).toHaveLength(0)
+    expect(router.state.location.search).toBe('?page=3&brand=Apple')
+  })
+
+  it('REQ-001#AC8 /search/ without a keyword shows the not-found page', async () => {
+    renderRoute('/search/')
+    expect(await screen.findByRole('heading', { name: '找不到這個頁面' })).toBeInTheDocument()
+  })
+
+  it('REQ-001#AC9 illegal sort/min fall back without rewriting the URL; later changes keep them', async () => {
+    const { router } = renderRoute('/search/iphone?sort=foo&min=abc&max=2000')
+    await waitForCards()
+    expect(cardNames()).toEqual(expectedNames({ max: 2000 }))
+    expect(screen.getByRole('button', { name: '綜合推薦' })).toHaveAttribute('aria-pressed', 'true')
+    expect(router.state.location.search).toBe('?sort=foo&min=abc&max=2000')
+    await userEvent.click(screen.getByRole('checkbox', { name: /^ESR/ }))
+    await waitFor(() =>
+      expect(router.state.location.search).toBe('?sort=foo&min=abc&max=2000&brand=ESR'),
+    )
+  })
+})
