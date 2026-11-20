@@ -55,6 +55,12 @@ p {
   outline: 2px solid var(--color-focus);
   outline-offset: 2px;
 }
+/* 文字輸入框不顯示 focus outline（checkbox / radio 仍保留，供鍵盤操作辨識） */
+input:not([type='checkbox'], [type='radio']):focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
 .container {
   width: 100%;
   margin-inline: auto;
