@@ -38,10 +38,7 @@ export function SiteHeader({ collapsed = false }: { collapsed?: boolean }) {
     <>
       <div ref={barRef} className={`container ${styles.bar}`}>
         <Link to="/" className={styles.logo} aria-label="momo shop 首頁">
-          <span aria-hidden="true">mo</span>
-          <span className={styles.logoMark} aria-hidden="true">
-            shop
-          </span>
+          <span aria-hidden="true">momo</span>
         </Link>
         <SearchBox />
         <CartBadge />

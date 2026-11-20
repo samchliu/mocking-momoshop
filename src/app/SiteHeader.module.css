@@ -15,9 +15,6 @@
   text-decoration: none;
   letter-spacing: -0.02em;
 }
-.logoMark {
-  color: var(--color-text);
-}
 /* knowledge: REQ-004#AC4 (CR-003) — one row at every width, horizontal scroll without a visible scrollbar, no hints */
 .catNav {
   height: var(--cat-nav-h); /* REQ-005: 45px incl. border */
