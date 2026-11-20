@@ -154,6 +154,37 @@ describe('GoodsPage (REQ-002)', () => {
     expect(addButton()).toBeEnabled()
   })
 
+  it('REQ-002#AC5 sold-out variant: exact accessible name, price follows variant, quantity shows 1 and is disabled', async () => {
+    await open(DEMO.variantProduct)
+    expect(
+      screen.getAllByRole('radio').filter((r) => (r as HTMLInputElement).checked),
+    ).toHaveLength(0)
+    const soldOut = screen.getByRole('radio', { name: '1TB（已售完）' })
+    expect(soldOut).toBeEnabled()
+    await userEvent.click(soldOut)
+    expect(within(priceBlock()).getByText('$53,900')).toBeInTheDocument()
+    expect(within(priceBlock()).queryByText('原價')).toBeNull()
+    const qty = screen.getByRole('spinbutton', { name: '數量' })
+    expect(qty).toBeDisabled()
+    expect(qty).toHaveValue(1)
+  })
+
+  it('REQ-002#AC5 switching variants shows min(chosen quantity, new limit)', async () => {
+    await open(DEMO.variantProduct)
+    await userEvent.click(screen.getByRole('radio', { name: '256GB' }))
+    await userEvent.click(screen.getByRole('button', { name: '增加數量' }))
+    expect(screen.getByRole('spinbutton', { name: '數量' })).toHaveValue(2)
+    await userEvent.click(screen.getByRole('radio', { name: '1TB（已售完）' }))
+    expect(screen.getByRole('spinbutton', { name: '數量' })).toHaveValue(1)
+    await userEvent.click(screen.getByRole('radio', { name: '256GB' }))
+    expect(screen.getByRole('spinbutton', { name: '數量' })).toHaveValue(2)
+  })
+
+  it('REQ-002#AC5 product without variants and no stock: quantity is disabled too', async () => {
+    await open(DEMO.soldOutProduct)
+    expect(screen.getByRole('spinbutton', { name: '數量' })).toBeDisabled()
+  })
+
   it('REQ-002#AC6 unknown product shows 「找不到商品」 with a link home', async () => {
     renderRoute('/goods/NO-SUCH-ID')
     expect(await screen.findByRole('heading', { name: '找不到商品' })).toBeInTheDocument()

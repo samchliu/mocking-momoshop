@@ -51,6 +51,31 @@ describe('FlashSale', () => {
     expect(screen.getAllByText('$1,000')).toHaveLength(2)
   })
 
+  it('REQ-003#AC2 before the start: 「即將開始」, no countdown, normal price, remaining sets shown', () => {
+    vi.setSystemTime(new Date('2026-11-20T09:59:59.000Z'))
+    renderSale()
+    expect(screen.getByText('即將開始')).toBeInTheDocument()
+    expect(screen.queryByRole('timer')).toBeNull()
+    expect(screen.queryByText('$850')).toBeNull()
+    expect(screen.getAllByText('$1,000')).toHaveLength(2)
+    expect(screen.getByText('最後3組')).toBeInTheDocument()
+    act(() => vi.advanceTimersByTime(1000))
+    expect(screen.getByRole('timer', { name: '距離結束' })).toHaveTextContent('02:00:00')
+    expect(screen.getByText('$850')).toBeInTheDocument()
+  })
+
+  it('REQ-003#AC2 unparsable times are treated as ended', () => {
+    vi.setSystemTime(new Date('2026-11-20T11:00:00.000Z'))
+    renderRoute('/', [
+      {
+        path: '/',
+        element: <FlashSale sale={{ ...sale, startsAt: 'bogus', endsAt: 'bogus' }} />,
+      },
+    ])
+    expect(screen.getByText('已結束')).toBeInTheDocument()
+    expect(screen.queryByText('$850')).toBeNull()
+  })
+
   it('BR-001#R5 a sale that has already ended renders without flash prices', () => {
     vi.setSystemTime(new Date('2026-11-20T13:00:00.000Z'))
     renderSale()
