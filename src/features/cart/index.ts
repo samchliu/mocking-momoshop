@@ -1,4 +1,5 @@
 export { CartBadge } from './CartBadge'
+export { CartView } from './CartView'
 export { CartProvider } from './CartProvider'
 export {
   cartCount,
