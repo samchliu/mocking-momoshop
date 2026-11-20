@@ -131,7 +131,7 @@ tags: [architecture, roadmap]
 - `.github/workflows/ci.yml` 已有三個 job：`verify`（kb validate → typecheck → lint → format → spec:check → unit）、`e2e`（desktop＋mobile）、`lighthouse`。
 - **repo 沒有設定 git remote，CI 從未執行過。** 目前所有閘門都只靠本機 husky hook。
 - Lighthouse 門檻偏鬆：performance ≥ 0.9，但實測是 100；只跑 desktop。
-- 沒有 bundle 大小預算（目前入口 gzip 75.9 kB，RPT-002）。
+- 沒有 bundle 大小預算（2026-11-20 量測：入口 chunk gzip 75.6 kB，加上 modulepreload 的共用 chunk 共 125.9 kB）。
 - commitlint（知識 ID 規則）只在本機 `commit-msg` hook 執行；用網頁編輯或 `--no-verify` 的 commit 不會被檢查。
 
 **做法**
@@ -139,7 +139,7 @@ tags: [architecture, roadmap]
 1. 推到遠端，設定分支保護：`verify`、`e2e`、`lighthouse` 為必要檢查，禁止直接推 main，merge 需要 review。
 2. CI 加一個 job 對 PR 範圍內的每個 commit 跑 commitlint（與本機規則相同）。
 3. **收緊 Lighthouse 門檻**到接近實測值〔提議值：performance ≥ 0.95〕，並加入 mobile preset（與 B2 一起做）。門檻的目的在於「抓退步」，而不是「及格」。
-4. **bundle 預算**：build 後用一支小腳本讀 `dist/` 的 gzip 大小，入口超過 85 kB〔提議值〕即失敗；不需要新增依賴。
+4. **bundle 預算**：build 後用一支小腳本讀 `dist/` 的 gzip 大小，入口 chunk 超過 85 kB、首次載入 JS 總量超過 140 kB〔提議值〕即失敗；不需要新增依賴。
 5. E2E 失敗時保留 trace，PR 留言附上連結。
 
 **成本**：約半天（不含遠端與權限設定）。
