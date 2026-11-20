@@ -4,6 +4,7 @@ import type {
   CartAddResponse,
   Facet,
   FlashSaleItem,
+  HomeFeedResponse,
   HomeResponse,
   ImageAsset,
   ProductDetail,
@@ -143,6 +144,17 @@ export function parseHomeResponse(d: unknown): HomeResponse {
         items: arr(so.items, `${p}.items`, parseProductSummary),
       }
     }),
+  }
+}
+
+export function parseHomeFeedResponse(d: unknown): HomeFeedResponse {
+  const o = obj(d, 'feed')
+  return {
+    items: arr(o.items, 'feed.items', parseProductSummary),
+    page: int(o.page, 'feed.page', 1),
+    pageSize: int(o.pageSize, 'feed.pageSize', 1),
+    totalPages: int(o.totalPages, 'feed.totalPages', 0),
+    total: int(o.total, 'feed.total', 0),
   }
 }
 

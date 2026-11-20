@@ -98,6 +98,15 @@ export interface HomeResponse {
   sections: Array<{ id: string; title: string; items: ProductSummary[] }>
 }
 
+/** GET /api/home/feed (API-001, CR-002) — one batch of the home「推薦商品」feed (REQ-005). */
+export interface HomeFeedResponse {
+  items: ProductSummary[]
+  page: number
+  pageSize: number
+  totalPages: number
+  total: number
+}
+
 export interface CartAddResponse {
   productId: string
   variantId: string | null

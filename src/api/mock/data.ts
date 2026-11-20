@@ -4,6 +4,7 @@
  */
 import type {
   FlashSaleItem,
+  HomeFeedResponse,
   HomeResponse,
   ImageAsset,
   ProductDetail,
@@ -75,6 +76,19 @@ for (const m of ['V15 Detect 無線吸塵器', 'Supersonic 吹風機', 'Purifier
   seeds.push({ brand: 'Dyson', name: m, price: [12900, 26900], category: '家電' })
 for (const m of ['奈米水離子吹風機', '變頻冰箱 500L', '洗脫烘滾筒洗衣機'])
   seeds.push({ brand: 'Panasonic', name: m, price: [4990, 52900], category: '家電' })
+// CR-002 Q1: the home feed needs ≥ 100 distinct products. Appended last so earlier products keep
+// their PRNG draws (ids, prices and search results for existing keywords are unchanged).
+for (const m of ['氣炸鍋 5L', '不沾平底鍋 28cm', '電子鍋 6人份', '果汁機', '咖啡機', '電烤箱 30L'])
+  for (const b of ['Philips', 'Tefal', '象印'])
+    seeds.push({ brand: b, name: m, price: [990, 12900], category: '廚房家電' })
+for (const m of ['Switch 2 主機', 'Joy-Con 2 控制器', '瑪利歐賽車 世界'])
+  seeds.push({ brand: 'Nintendo', name: m, price: [1690, 15980], category: '遊戲' })
+for (const m of ['WH-1000XM6 耳罩式耳機', 'WF-1000XM6 真無線耳機', 'ULT FIELD 1 藍牙喇叭'])
+  seeds.push({ brand: 'SONY', name: m, price: [3490, 13990], category: '耳機' })
+for (const m of ['Watch Series 11', 'Watch Ultra 3', 'iPad Air 11 M3', 'iPad mini 7'])
+  seeds.push({ brand: 'Apple', name: m, price: [12900, 27900], category: '穿戴與平板' })
+for (const m of ['小米手環 10', '掃地機器人 X20', '行動電源 20000mAh', '電動牙刷 T501'])
+  seeds.push({ brand: 'Xiaomi', name: m, price: [690, 15990], category: '生活家電' })
 
 function summaryFrom(id: string, s: Seed): ProductSummary {
   const price = round10(between(s.price[0], s.price[1]))
@@ -226,6 +240,27 @@ const toSummary = ({
 
 export const PRODUCTS: readonly ProductSummary[] = [...details.values()].map(toSummary)
 export const getProductDetail = (id: string) => details.get(id)
+
+/**
+ * Home「推薦商品」feed (API-001 GET /api/home/feed, CR-002): 5 batches × 20 distinct products,
+ * in a stable order so the same page always returns the same items (CR-002 F3).
+ */
+export const FEED_PAGE_SIZE = 20
+export const FEED_TOTAL_PAGES = 5
+const FEED: readonly ProductSummary[] = [...PRODUCTS]
+  .sort((a, b) => (a.id < b.id ? -1 : 1))
+  .slice(0, FEED_PAGE_SIZE * FEED_TOTAL_PAGES)
+
+export function buildHomeFeed(page: number): HomeFeedResponse {
+  const start = (page - 1) * FEED_PAGE_SIZE
+  return {
+    items: FEED.slice(start, start + FEED_PAGE_SIZE), // CR-002 F2: past the last page → []
+    page,
+    pageSize: FEED_PAGE_SIZE,
+    totalPages: Math.ceil(FEED.length / FEED_PAGE_SIZE),
+    total: FEED.length,
+  }
+}
 
 export function buildHome(now = new Date()): HomeResponse {
   // flash sale window: the current 2-hour slot (BR-001#R5)

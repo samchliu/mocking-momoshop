@@ -1,5 +1,6 @@
 import {
   parseCartAddResponse,
+  parseHomeFeedResponse,
   parseHomeResponse,
   parseProductDetail,
   parseSearchResponse,
@@ -79,5 +80,44 @@ describe('API-001 mock backend contract', () => {
     expect(h.banners.length).toBeGreaterThan(0)
     expect(h.flashSale.items.length).toBeGreaterThan(0)
     expect(h.hotKeywords).toContain('iphone')
+  })
+
+  describe('GET /api/home/feed (CR-002)', () => {
+    it('CR-002 F3 五批共 100 個、每批 20 個，parser 通過且跨批次 id 不重複', async () => {
+      const ids: string[] = []
+      for (let page = 1; page <= 5; page++) {
+        const { status, body } = await get(`/api/home/feed?page=${page}`)
+        expect(status).toBe(200)
+        const r = parseHomeFeedResponse(body)
+        expect(r).toMatchObject({ page, pageSize: 20, totalPages: 5, total: 100 })
+        expect(r.items).toHaveLength(20)
+        ids.push(...r.items.map((i) => i.id))
+      }
+      expect(new Set(ids).size).toBe(100)
+    })
+
+    it('CR-002 F3 同一 page 重複請求回傳相同內容', async () => {
+      const a = (await get('/api/home/feed?page=3')).body
+      const b = (await get('/api/home/feed?page=3')).body
+      expect(b).toEqual(a)
+    })
+
+    it('CR-002 F2 page 超過 totalPages 時回 200 與空 items，page 照請求值', async () => {
+      const { status, body } = await get('/api/home/feed?page=6')
+      expect(status).toBe(200)
+      expect(parseHomeFeedResponse(body)).toMatchObject({ items: [], page: 6, totalPages: 5 })
+    })
+
+    it.each(['', '?page=', '?page=0', '?page=-1', '?page=1.5', '?page=abc'])(
+      'CR-002 F1 page 缺少或非正整數時回 400（%s）',
+      async (qs) => {
+        expect((await get(`/api/home/feed${qs}`)).status).toBe(400)
+      },
+    )
+
+    it('CR-002 F4 商品流的商品是 ProductSummary，不含限搶價', async () => {
+      const r = parseHomeFeedResponse((await get('/api/home/feed?page=1')).body)
+      for (const i of r.items) expect(i).not.toHaveProperty('flashPrice')
+    })
   })
 })

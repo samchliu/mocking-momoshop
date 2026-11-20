@@ -1,0 +1,71 @@
+/* knowledge: REQ-005 商品流規格「卡片高度」 — numbers mirror FEED_LAYOUT in feedLayout.ts */
+.section {
+  --feed-cols: 2;
+  --feed-card-h: var(--feed-card-h-compact);
+  --feed-gap: var(--feed-gap-compact);
+  padding: var(--space-4) 0;
+}
+@media (min-width: 1024px) {
+  .section {
+    --feed-cols: 5;
+    --feed-card-h: var(--feed-card-h-wide);
+    --feed-gap: var(--feed-gap-wide);
+  }
+}
+.title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-xl);
+}
+/* Full height of every loaded row → the scrollbar never jumps while rows mount/unmount (AC8). */
+.list {
+  position: relative;
+  height: calc(var(--rows) * (var(--feed-card-h) + var(--feed-gap)));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.item {
+  position: absolute;
+  top: calc(var(--row) * (var(--feed-card-h) + var(--feed-gap)));
+  left: calc(var(--col) * (100% + var(--feed-gap)) / var(--feed-cols));
+  width: calc((100% - (var(--feed-cols) - 1) * var(--feed-gap)) / var(--feed-cols));
+  height: var(--feed-card-h);
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+.placeholder {
+  height: calc(var(--feed-card-h) + var(--feed-gap));
+}
+.sentinel {
+  height: 1px;
+}
+.status {
+  display: block;
+  margin: 0;
+  padding: var(--space-4) 0;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+.error {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-4) 0;
+}
+.error p {
+  margin: 0;
+}
+.button {
+  min-height: 44px;
+  padding: 0 var(--space-6);
+  border: 1px solid var(--color-brand);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  color: var(--color-brand);
+}
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
