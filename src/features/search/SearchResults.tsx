@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router'
-import { StatusView } from '@/components'
+import { Button, StatusView } from '@/components'
 import { ProductCard } from '@/features/catalog'
 import { FilterPanel } from './FilterPanel'
 import { Pagination } from './Pagination'
@@ -86,13 +86,12 @@ export function SearchResults({ keyword }: { keyword: string }) {
             emptyHint={
               // knowledge: REQ-001#AC5
               filtered ? (
-                <button
-                  type="button"
-                  className={styles.secondaryButton}
+                <Button
+                  variant="secondary"
                   onClick={() => change({ brands: [], min: undefined, max: undefined })}
                 >
                   清除篩選
-                </button>
+                </Button>
               ) : hot.data && hot.data.length > 0 ? (
                 <nav className={styles.hot} aria-label="熱門關鍵字">
                   <p className={styles.hotTitle}>試試熱門關鍵字：</p>

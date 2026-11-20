@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
+import { Button, TextInput } from '@/components'
 import type { Facet, SearchCriteria } from '@/features/catalog'
 import { hasFilters, type CriteriaChange } from './params'
 import styles from './SearchResults.module.css'
@@ -19,6 +20,7 @@ const startOpen = () =>
 /** Brand facet (with counts) + price range (REQ-001#AC3, BR-002#R4, BR-002#R7). */
 export function FilterPanel({ criteria, facets, onChange }: Props) {
   const [open] = useState(startOpen)
+  const ids = useId()
   const brandFacet = facets?.find((f) => f.key === 'brand')
   const options = brandFacet?.options ?? []
   // A selected brand that has no hits under the other conditions must stay visible to be unchecked.
@@ -65,10 +67,10 @@ export function FilterPanel({ criteria, facets, onChange }: Props) {
             <fieldset className={styles.fieldset}>
               <legend className={styles.legend}>價格區間</legend>
               <div className={styles.range}>
-                <label className={styles.rangeField}>
+                <label className={styles.rangeField} htmlFor={`${ids}-min`}>
                   <span className="visually-hidden">最低價</span>
-                  <input
-                    className={styles.input}
+                  <TextInput
+                    id={`${ids}-min`}
                     type="number"
                     name="min"
                     inputMode="numeric"
@@ -79,10 +81,10 @@ export function FilterPanel({ criteria, facets, onChange }: Props) {
                   />
                 </label>
                 <span aria-hidden="true">～</span>
-                <label className={styles.rangeField}>
+                <label className={styles.rangeField} htmlFor={`${ids}-max`}>
                   <span className="visually-hidden">最高價</span>
-                  <input
-                    className={styles.input}
+                  <TextInput
+                    id={`${ids}-max`}
                     type="number"
                     name="max"
                     inputMode="numeric"
@@ -92,21 +94,21 @@ export function FilterPanel({ criteria, facets, onChange }: Props) {
                     defaultValue={criteria.max}
                   />
                 </label>
-                <button className={styles.secondaryButton} type="submit">
+                <Button variant="secondary" type="submit">
                   確認
-                </button>
+                </Button>
               </div>
             </fieldset>
           </form>
 
           {hasFilters(criteria) && (
-            <button
-              type="button"
-              className={styles.linkButton}
+            <Button
+              variant="text"
+              className={styles.clearAll}
               onClick={() => onChange({ brands: [], min: undefined, max: undefined })}
             >
               全部清除
-            </button>
+            </Button>
           )}
         </div>
       </details>

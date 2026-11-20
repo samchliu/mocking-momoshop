@@ -85,34 +85,8 @@
   flex: 1 1 0;
   min-width: 0;
 }
-.input {
-  width: 100%;
-  min-height: 44px;
-  padding: 0 var(--space-2);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  font-size: var(--fs-md);
-}
-.secondaryButton {
-  min-height: 44px;
-  padding: 0 var(--space-4);
-  border: 1px solid var(--color-brand);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  color: var(--color-brand);
-}
-.secondaryButton:hover {
-  background: var(--color-bg-subtle);
-}
-.linkButton {
+.clearAll {
   justify-self: start;
-  min-height: 44px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: var(--color-brand);
-  text-decoration: underline;
 }
 
 /* toolbar: sort + top pager */
