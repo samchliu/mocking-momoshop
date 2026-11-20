@@ -20,7 +20,8 @@
   --color-tag: #e0245e; /* tag badges · measured #ff4c76 (3.2:1 with white 11px text) → 4.6:1 */
 
   /* color — surfaces */
-  --color-bg: #ffffff;
+  --color-bg: #ffffff; /* header, main container */
+  --color-bg-page: #f2f2f2; /* page gutters around the container (REQ-004) */
   --color-bg-subtle: #f4f4f4; /* filter labels, skeletons */
   --color-border: #e7e7e7;
   --color-border-strong: #cccccc; /* outlined buttons (選更多) */
@@ -52,6 +53,7 @@
   --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08);
 
   /* layout */
-  --container-max: 1200px;
+  --container-max: 1220px; /* REQ-004 */
+  --container-gutter: 16px; /* outer margin each side when the viewport is narrower */
   --header-h: 64px;
 }

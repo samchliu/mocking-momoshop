@@ -25,9 +25,10 @@
   display: grid;
   gap: var(--space-6);
 }
-@media (min-width: 768px) {
+/* knowledge: REQ-002#AC8 — ≥1024px: 440px gallery + rest, 24px gap; below: one column, gallery first */
+@media (min-width: 1024px) {
   .layout {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: 440px minmax(0, 1fr);
     align-items: start;
   }
 }
@@ -79,12 +80,6 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
-}
-.brand {
-  margin: 0;
-  color: var(--color-text-muted);
-  font-size: var(--fs-sm);
-  font-weight: 600;
 }
 .name {
   margin: 0;
@@ -302,4 +297,75 @@
 }
 .skeletonLine {
   height: var(--space-8);
+}
+
+/* 標籤：值 info list (REQ-002#AC9) */
+.infoList {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding-block: var(--space-3);
+  border-block: 1px solid var(--color-border);
+}
+.infoRow {
+  display: grid;
+  grid-template-columns: 5.5em minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-3);
+}
+.infoRow dt {
+  color: var(--color-text-muted);
+}
+.infoRow dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.infoRow a {
+  color: var(--color-cart);
+}
+
+/* detail tabs (REQ-002#AC10, AC11) */
+.details {
+  margin-top: var(--space-8);
+}
+.tabList {
+  display: flex;
+  border-bottom: 1px solid var(--color-border-strong);
+}
+.tab {
+  min-height: 44px;
+  padding-inline: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-bottom: none;
+  border-top: 2px solid transparent;
+  background: var(--color-bg-subtle);
+  color: var(--color-text);
+  font: inherit;
+  font-size: var(--fs-md);
+  cursor: pointer;
+}
+.tab[aria-selected='true'] {
+  border-top-color: var(--color-text);
+  background: var(--color-bg);
+  font-weight: 600;
+}
+.tabPanel {
+  padding: var(--space-4) 0;
+  overflow-wrap: anywhere;
+}
+.specTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+.specTable th,
+.specTable td {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border);
+  text-align: left;
+  vertical-align: top;
+}
+.specTable th {
+  width: 9em;
+  background: var(--color-bg-subtle);
+  font-weight: 400;
 }

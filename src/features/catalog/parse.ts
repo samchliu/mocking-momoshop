@@ -13,6 +13,12 @@ import type {
 } from './types'
 
 const money = (d: unknown, p: string) => int(d, p, 0)
+/** String that is non-empty after trimming; returns the trimmed value. */
+const filled = (d: unknown, p: string) => {
+  const s = str(d, p).trim()
+  if (s === '') throw new Error(`${p}: expected non-blank string`)
+  return s
+}
 
 export function parseImage(d: unknown, p = 'image'): ImageAsset {
   const o = obj(d, p)
@@ -67,6 +73,11 @@ export function parseProductDetail(d: unknown): ProductDetail {
     variants: arr(o.variants, 'detail.variants', parseVariant),
     stock: int(o.stock, 'detail.stock', 0),
     purchaseLimit: int(o.purchaseLimit, 'detail.purchaseLimit', 1),
+    // knowledge: API-001 specs — required array; each label/value a non-blank string, output trimmed
+    specs: arr(o.specs, 'detail.specs', (r, p) => {
+      const ro = obj(r, p)
+      return { label: filled(ro.label, `${p}.label`), value: filled(ro.value, `${p}.value`) }
+    }),
   }
 }
 

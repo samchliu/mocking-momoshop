@@ -21,6 +21,7 @@ const product = (over: Partial<ProductDetail> = {}): ProductDetail => ({
   createdAt: '2026-01-01T00:00:00Z',
   category: [],
   highlights: [],
+  specs: [],
   variants,
   stock: 14,
   purchaseLimit: 2,

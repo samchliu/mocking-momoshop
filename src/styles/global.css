@@ -55,9 +55,28 @@ p {
 }
 .container {
   width: 100%;
-  max-width: var(--container-max);
   margin-inline: auto;
   padding-inline: var(--space-4);
+}
+/* knowledge: REQ-004#AC1 — grey page, full-width white header, centred white <main> */
+.site {
+  min-height: 100vh;
+  background: var(--color-bg-page);
+}
+.site-header {
+  background: var(--color-bg);
+}
+.site-header .container,
+.site-main {
+  width: min(var(--container-max), 100% - 2 * var(--container-gutter));
+  margin-inline: auto;
+}
+.site-header .container {
+  padding-inline: 0;
+}
+.site-main {
+  display: block;
+  background: var(--color-bg);
 }
 .visually-hidden {
   position: absolute !important;

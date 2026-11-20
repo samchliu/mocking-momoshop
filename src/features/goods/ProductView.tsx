@@ -2,6 +2,7 @@ import { Link } from 'react-router'
 import { ApiError } from '@/api'
 import { StatusView } from '@/components'
 import type { ProductDetail } from '@/features/catalog'
+import { DetailTabs } from './DetailTabs'
 import { Gallery } from './Gallery'
 import { PurchasePanel, type AddRequest } from './PurchasePanel'
 import { useProduct } from './useProduct'
@@ -55,22 +56,14 @@ function ProductDetailView({
       </nav>
       <div className={styles.layout}>
         <Gallery images={product.images.length > 0 ? product.images : [product.image]} />
+        {/* knowledge: REQ-002#AC8 — right column order: 品名 → 價格 → 選項 → 資訊表 → 放入購物車 */}
         <div className={styles.info}>
-          <p className={styles.brand} data-brand>
-            {product.brand}
-          </p>
           <h1 className={styles.name}>{product.name}</h1>
           {product.promoText && <p className={styles.promo}>{product.promoText}</p>}
           <PurchasePanel product={product} onAdd={onAdd} isAdding={isAdding} />
-          {product.highlights.length > 0 && (
-            <ul className={styles.highlights}>
-              {product.highlights.map((h) => (
-                <li key={h}>{h}</li>
-              ))}
-            </ul>
-          )}
         </div>
       </div>
+      <DetailTabs product={product} />
     </article>
   )
 }
