@@ -96,6 +96,14 @@ function summaryFrom(id: string, s: Seed): ProductSummary {
 }
 
 const details = new Map<string, ProductDetail>()
+/** Generic 規格表 rows derived from the summary (API-001 specs). */
+function specsFor(summary: ProductSummary, categoryLabel: string): ProductDetail['specs'] {
+  return [
+    { label: '品牌名稱', value: summary.brand },
+    { label: '商品類別', value: categoryLabel },
+    { label: '保固', value: '台灣原廠保固一年' },
+  ]
+}
 function register(
   summary: ProductSummary,
   extra: Partial<ProductDetail> & { categoryLabel: string },
@@ -116,6 +124,7 @@ function register(
     variants: [],
     stock: between(1, 30),
     purchaseLimit: 5,
+    specs: specsFor(summary, categoryLabel),
     ...rest,
   }
   details.set(detail.id, detail)
@@ -145,7 +154,21 @@ const demo1: ProductSummary = {
   listPrice: 41900,
   priceFrom: true, // BR-001#R6
 }
-register(demo1, { categoryLabel: '手機', variants, stock: 14, purchaseLimit: 2 })
+register(demo1, {
+  categoryLabel: '手機',
+  variants,
+  stock: 14,
+  purchaseLimit: 2,
+  // API-001: demo with ≥3 rows and a repeated label
+  specs: [
+    { label: '品牌名稱', value: 'Apple' },
+    { label: '容量', value: '256GB / 512GB / 1TB' },
+    { label: '顏色', value: '宇宙橙' },
+    { label: '顏色', value: '深藍色' },
+    { label: '處理器', value: 'A19 Pro' },
+    { label: '上市時間', value: '2025年9月' },
+  ],
+})
 
 const demo2 = {
   ...summaryFrom(DEMO.simpleProduct, {
@@ -157,7 +180,7 @@ const demo2 = {
   price: 7490,
   listPrice: 7990,
 }
-register(demo2, { categoryLabel: '耳機', stock: 3, purchaseLimit: 5 })
+register(demo2, { categoryLabel: '耳機', stock: 3, purchaseLimit: 5, specs: [] }) // API-001: empty-specs demo
 
 const demo3 = {
   ...summaryFrom(DEMO.soldOutProduct, {
@@ -197,6 +220,7 @@ const toSummary = ({
   variants: _v,
   stock: _s,
   purchaseLimit: _p,
+  specs: _sp,
   ...s
 }: ProductDetail): ProductSummary => s
 

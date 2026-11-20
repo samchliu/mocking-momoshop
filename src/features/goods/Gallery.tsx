@@ -9,7 +9,7 @@ export function Gallery({ images }: { images: ImageAsset[] }) {
   const main = images[index] ?? images[0]
   if (!main) return null
   return (
-    <div className={styles.gallery}>
+    <div className={styles.gallery} data-testid="gallery">
       <SmartImage
         className={styles.mainImage}
         src={main.src}

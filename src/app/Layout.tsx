@@ -10,7 +10,7 @@ const DEBUG =
 
 export function Layout() {
   return (
-    <>
+    <div className="site">
       <a className="skip-link" href="#main">
         跳到主要內容
       </a>
@@ -18,7 +18,7 @@ export function Layout() {
       <header className="site-header">
         <SiteHeader />
       </header>
-      <main id="main" tabIndex={-1}>
+      <main id="main" className="site-main" tabIndex={-1}>
         <Outlet />
       </main>
       <footer>{/* <SiteFooter /> */}</footer>
@@ -28,6 +28,6 @@ export function Layout() {
           <DebugPanel />
         </Suspense>
       )}
-    </>
+    </div>
   )
 }

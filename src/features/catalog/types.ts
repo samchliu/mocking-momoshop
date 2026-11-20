@@ -39,6 +39,13 @@ export interface ProductDetail extends ProductSummary {
   variants: Variant[]
   stock: number
   purchaseLimit: number
+  /** 規格表 (API-001, REQ-002#AC11); `[]` when the product has none. */
+  specs: SpecRow[]
+}
+
+export interface SpecRow {
+  label: string
+  value: string
 }
 
 export type SortOption = 'relevance' | 'sales' | 'newest' | 'price_asc' | 'price_desc'

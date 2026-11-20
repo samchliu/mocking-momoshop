@@ -1,4 +1,5 @@
 import { useId, useRef, useState } from 'react'
+import { Link } from 'react-router'
 import { clampQuantity, type ProductDetail } from '@/features/catalog'
 import { PriceBlock } from './PriceBlock'
 import { quantityFromInput, resolveSelection } from './selection'
@@ -93,55 +94,74 @@ export function PurchasePanel({ product, onAdd, isAdding }: Props) {
         </fieldset>
       )}
 
-      <div className={styles.quantityRow}>
-        <label htmlFor={`${ids}-qty`} className={styles.fieldLabel}>
-          數量
-        </label>
-        {/* knowledge: REQ-002#AC3, BR-003#R2 */}
-        <div className={styles.stepper}>
-          <button
-            type="button"
-            className={styles.stepButton}
-            aria-label="減少數量"
-            disabled={sel.soldOut || quantity <= 1}
-            onClick={() => {
-              setDraft(null)
-              setWanted(clampQuantity(quantity - 1, limits))
-            }}
-          >
-            −
-          </button>
-          <input
-            id={`${ids}-qty`}
-            type="number"
-            inputMode="numeric"
-            min={1}
-            max={Math.max(1, sel.maxQuantity)}
-            step={1}
-            className={styles.qtyInput}
-            disabled={sel.soldOut}
-            value={draft ?? String(Math.max(1, quantity))}
-            onChange={(e) => setDraft(e.target.value)}
-            onBlur={commitDraft}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') commitDraft()
-            }}
-          />
-          <button
-            type="button"
-            className={styles.stepButton}
-            aria-label="增加數量"
-            disabled={sel.soldOut || quantity >= sel.maxQuantity}
-            onClick={() => {
-              setDraft(null)
-              setWanted(clampQuantity(quantity + 1, limits))
-            }}
-          >
-            +
-          </button>
+      {/* knowledge: REQ-002#AC9 — 標籤：值 rows; the 數量 row holds the page's only quantity control */}
+      <dl className={styles.infoList}>
+        {product.brand.trim() !== '' && (
+          <div className={styles.infoRow}>
+            <dt>品牌名稱</dt>
+            <dd>
+              <Link to={`/search/${encodeURIComponent(product.brand.trim())}`} data-brand>
+                {product.brand.trim()}
+              </Link>
+            </dd>
+          </div>
+        )}
+        <div className={styles.infoRow}>
+          <dt>品號</dt>
+          <dd>{product.id}</dd>
         </div>
-        <span className={styles.limit}>每人限購 {product.purchaseLimit} 件</span>
-      </div>
+        <div className={styles.infoRow}>
+          <dt>
+            <label htmlFor={`${ids}-qty`}>數量</label>
+          </dt>
+          <dd className={styles.quantityRow}>
+            {/* knowledge: REQ-002#AC3, BR-003#R2 */}
+            <div className={styles.stepper}>
+              <button
+                type="button"
+                className={styles.stepButton}
+                aria-label="減少數量"
+                disabled={sel.soldOut || quantity <= 1}
+                onClick={() => {
+                  setDraft(null)
+                  setWanted(clampQuantity(quantity - 1, limits))
+                }}
+              >
+                −
+              </button>
+              <input
+                id={`${ids}-qty`}
+                type="number"
+                inputMode="numeric"
+                min={1}
+                max={Math.max(1, sel.maxQuantity)}
+                step={1}
+                className={styles.qtyInput}
+                disabled={sel.soldOut}
+                value={draft ?? String(Math.max(1, quantity))}
+                onChange={(e) => setDraft(e.target.value)}
+                onBlur={commitDraft}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') commitDraft()
+                }}
+              />
+              <button
+                type="button"
+                className={styles.stepButton}
+                aria-label="增加數量"
+                disabled={sel.soldOut || quantity >= sel.maxQuantity}
+                onClick={() => {
+                  setDraft(null)
+                  setWanted(clampQuantity(quantity + 1, limits))
+                }}
+              >
+                +
+              </button>
+            </div>
+            <span className={styles.limit}>每人限購 {product.purchaseLimit} 件</span>
+          </dd>
+        </div>
+      </dl>
 
       <div className={styles.actions}>
         {/* knowledge: REQ-002#AC4 BR-003#R4 (disabled while pending), REQ-002#AC5 BR-003#R3 (sold out) */}

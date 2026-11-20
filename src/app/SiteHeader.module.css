@@ -18,3 +18,34 @@
 .logoMark {
   color: var(--color-text);
 }
+/* knowledge: REQ-004#AC4 — one row at every width, native horizontal scroll, no hints */
+.catNav {
+  border-top: 1px solid var(--color-border);
+}
+.catList {
+  display: flex;
+  gap: var(--space-1);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+.catLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding-inline: var(--space-3);
+  color: var(--color-text);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  text-decoration: none;
+}
+.catLink:hover {
+  text-decoration: underline;
+}
+.catLink[aria-current='page'] {
+  color: var(--color-brand);
+}

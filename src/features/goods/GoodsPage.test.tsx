@@ -171,3 +171,75 @@ describe('GoodsPage (REQ-002)', () => {
     ).toBeInTheDocument()
   })
 })
+
+describe('GoodsPage detail layout (REQ-002 v2, CR-001)', () => {
+  it('REQ-002#AC9 dl rows 品牌名稱 / 品號 / 數量; brand links to keyword search; one quantity control', async () => {
+    await open(DEMO.variantProduct)
+    const dl = screen.getAllByRole('term')[0]?.closest('dl') as HTMLElement
+    expect(
+      within(dl)
+        .getAllByRole('term')
+        .map((t) => t.textContent),
+    ).toEqual(['品牌名稱', '品號', '數量'])
+    expect(within(dl).getByRole('link', { name: 'Apple' })).toHaveAttribute('href', '/search/Apple')
+    expect(within(dl).getByText(DEMO.variantProduct)).toBeInTheDocument()
+    expect(within(dl).getByRole('spinbutton', { name: '數量' })).toBeInTheDocument()
+    expect(within(dl).getByText('每人限購 2 件')).toBeInTheDocument()
+    expect(screen.getAllByRole('spinbutton')).toHaveLength(1)
+  })
+
+  it('REQ-002#AC10 three tabs, 商品特色 selected by default, others hidden', async () => {
+    await open(DEMO.variantProduct)
+    const tabs = within(screen.getByRole('tablist')).getAllByRole('tab')
+    expect(tabs.map((t) => t.textContent)).toEqual(['商品特色', '商品規格', '退換貨須知'])
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true')
+    expect(tabs[0]).toHaveAttribute('tabindex', '0')
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1')
+    const panel = screen.getByRole('tabpanel', { name: '商品特色' })
+    expect(within(panel).getByRole('list')).toBeInTheDocument()
+    expect(screen.getAllByRole('tabpanel', { hidden: true })).toHaveLength(3)
+  })
+
+  it('REQ-002#AC10 arrow keys switch immediately and wrap; Home/End jump', async () => {
+    const user = userEvent.setup()
+    await open(DEMO.variantProduct)
+    const tab = (name: string) => screen.getByRole('tab', { name })
+    tab('商品特色').focus()
+    await user.keyboard('{ArrowRight}')
+    expect(tab('商品規格')).toHaveFocus()
+    expect(tab('商品規格')).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tabpanel', { name: '商品規格' })).toBeVisible()
+    await user.keyboard('{ArrowRight}{ArrowRight}')
+    expect(tab('商品特色')).toHaveAttribute('aria-selected', 'true')
+    await user.keyboard('{ArrowLeft}')
+    expect(tab('退換貨須知')).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('tabpanel', { name: '退換貨須知' })).toHaveTextContent('7 天鑑賞期')
+    await user.keyboard('{Home}')
+    expect(tab('商品特色')).toHaveAttribute('aria-selected', 'true')
+    await user.keyboard('{End}')
+    expect(tab('退換貨須知')).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('REQ-002#AC11 specs table with row headers in order, including duplicate labels', async () => {
+    const user = userEvent.setup()
+    await open(DEMO.variantProduct)
+    await user.click(screen.getByRole('tab', { name: '商品規格' }))
+    const table = within(screen.getByRole('tabpanel', { name: '商品規格' })).getByRole('table')
+    const rows = within(table).getAllByRole('row')
+    expect(rows.length).toBeGreaterThanOrEqual(3)
+    const headers = within(table)
+      .getAllByRole('rowheader')
+      .map((h) => h.textContent)
+    expect(new Set(headers).size).toBeLessThan(headers.length)
+    expect(within(table).queryByRole('columnheader')).toBeNull()
+  })
+
+  it('REQ-002#AC11 empty specs show 暫無規格資料', async () => {
+    const user = userEvent.setup()
+    await open(DEMO.simpleProduct)
+    await user.click(screen.getByRole('tab', { name: '商品規格' }))
+    const panel = screen.getByRole('tabpanel', { name: '商品規格' })
+    expect(within(panel).queryByRole('table')).toBeNull()
+    expect(panel).toHaveTextContent('暫無規格資料')
+  })
+})
