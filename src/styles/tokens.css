@@ -1,23 +1,39 @@
-/* Design tokens — single source of truth. Sections must use these, never hard-coded values. */
+/*
+ * Design tokens — single source of truth. Sections must use these, never hard-coded values.
+ * Values measured from the live site's computed styles on 2026-11-20 (search + product pages, see RPT-002).
+ * Where the measured colour fails WCAG AA for its use, the nearest compliant colour is used and the
+ * original is noted — accessibility wins over pixel fidelity.
+ */
 :root {
-  /* color */
-  --color-brand: #2563eb;
+  /* color — brand */
+  --color-brand: #d62872; /* logo, active sort, price, 直接購買 · 4.8:1 on white */
   --color-brand-contrast: #ffffff;
-  --color-text: #222222;
-  --color-text-muted: #666666;
-  --color-price: #b91c1c; /* ≥4.5:1 on white and on --color-bg-subtle (WCAG AA) */
-  --color-bg: #ffffff;
-  --color-bg-subtle: #f5f5f5;
-  --color-border: #e5e5e5;
-  --color-focus: #1a73e8;
+  --color-cart: #1c6fbc; /* 放入購物車 button · 5.2:1 with white text */
+  --color-nav: #515151; /* category bar, header search button */
 
-  /* typography */
-  --font-sans: 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', system-ui, sans-serif;
-  --fs-xs: 0.75rem;
-  --fs-sm: 0.875rem;
-  --fs-md: 1rem;
-  --fs-lg: 1.25rem;
-  --fs-xl: 1.5rem;
+  /* color — text */
+  --color-text: #333333; /* body text */
+  --color-text-strong: #454545; /* product names */
+  --color-text-muted: #6b6b6b; /* measured #999999 (2.8:1) → ≥4.5:1 on both white and --color-bg-subtle */
+  --color-price: #d62872; /* prices use the brand pink */
+  --color-promo: #dd2726; /* promo slogan, e.g. 滿1件折1800 */
+  --color-tag: #e0245e; /* tag badges · measured #ff4c76 (3.2:1 with white 11px text) → 4.6:1 */
+
+  /* color — surfaces */
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f4f4f4; /* filter labels, skeletons */
+  --color-border: #e7e7e7;
+  --color-border-strong: #cccccc; /* outlined buttons (選更多) */
+  --color-focus: #1c6fbc;
+
+  /* typography — the site renders Helvetica/Arial for Latin, system CJK fonts for Chinese */
+  --font-sans: Helvetica, Arial, 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+  --font-price: 'Century Gothic', Futura, Helvetica, Arial, sans-serif;
+  --fs-xs: 0.6875rem; /* 11px  tags, sales count */
+  --fs-sm: 0.8125rem; /* 13px  base UI text */
+  --fs-md: 0.875rem; /*  14px  product names */
+  --fs-lg: 1rem; /*      16px  primary buttons */
+  --fs-xl: 1.5rem; /*    24px  prices */
   --lh-tight: 1.25;
   --lh-normal: 1.5;
 
@@ -29,13 +45,13 @@
   --space-6: 24px;
   --space-8: 32px;
 
-  /* shape / elevation */
-  --radius-sm: 4px;
-  --radius-md: 8px;
+  /* shape / elevation — the site is almost square-cornered */
+  --radius-sm: 2px; /* tags */
+  --radius-md: 4px;
+  --radius-pill: 100px; /* header search field */
   --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08);
 
   /* layout */
   --container-max: 1200px;
   --header-h: 64px;
 }
-/* Breakpoints (use in media queries): mobile < 768px, tablet 768–1023px, desktop >= 1024px */
