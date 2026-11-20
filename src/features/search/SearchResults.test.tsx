@@ -208,9 +208,23 @@ describe('SearchResults URL edge cases (REQ-001 v3)', () => {
     expect(cardNames()).toEqual(expectedNames({ max: 2000 }))
     expect(screen.getByRole('button', { name: '綜合推薦' })).toHaveAttribute('aria-pressed', 'true')
     expect(router.state.location.search).toBe('?sort=foo&min=abc&max=2000')
+    expect(screen.getByLabelText('最低價')).toHaveValue(null)
+    expect(screen.getByLabelText('最高價')).toHaveValue(2000)
     await userEvent.click(screen.getByRole('checkbox', { name: /^ESR/ }))
     await waitFor(() =>
       expect(router.state.location.search).toBe('?sort=foo&min=abc&max=2000&brand=ESR'),
     )
+  })
+
+  it('REQ-001#AC3 lists only brands with hits; a checked brand with 0 hits stays as (0)', async () => {
+    renderRoute('/search/iphone?max=2000&brand=Apple')
+    const filters = await screen.findByRole('complementary', { name: '篩選條件' })
+    await waitFor(() =>
+      expect(within(filters).getByRole('checkbox', { name: 'Apple (0)' })).toBeChecked(),
+    )
+    for (const box of within(filters).getAllByRole('checkbox')) {
+      if (box === within(filters).getByRole('checkbox', { name: 'Apple (0)' })) continue
+      expect(box).not.toHaveAccessibleName(/\(0\)$/)
+    }
   })
 })
