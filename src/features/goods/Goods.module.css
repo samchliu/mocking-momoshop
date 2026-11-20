@@ -1,0 +1,304 @@
+/* Product page (REQ-002). Mobile-first: gallery stacked on top, two columns from 768px. */
+.page {
+  padding-block: var(--space-4) var(--space-8);
+}
+
+.breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0 0 var(--space-4);
+  padding: 0;
+  list-style: none;
+  color: var(--color-text-muted);
+  font-size: var(--fs-xs);
+}
+.breadcrumb li + li::before {
+  content: '\\';
+  margin-right: var(--space-1);
+}
+.breadcrumb a {
+  color: inherit;
+}
+
+.layout {
+  display: grid;
+  gap: var(--space-6);
+}
+@media (min-width: 768px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+/* gallery */
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.mainImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+}
+.thumbs {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.thumb {
+  display: block;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  cursor: pointer;
+  overflow: hidden;
+}
+.thumb[aria-pressed='true'] {
+  border-color: var(--color-brand);
+}
+.thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* info */
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.brand {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.name {
+  margin: 0;
+  font-size: var(--fs-xl);
+  line-height: var(--lh-tight);
+}
+.promo {
+  margin: 0;
+  color: var(--color-price);
+  font-size: var(--fs-sm);
+}
+.highlights {
+  margin: 0;
+  padding-left: var(--space-6);
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+
+/* price (BR-001#R4) */
+.priceBlock {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+}
+.priceRow,
+.listRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin: 0;
+}
+.priceLabel {
+  min-width: 3em;
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+.price {
+  color: var(--color-price);
+  font-size: var(--fs-xl);
+  font-weight: 700;
+}
+.from {
+  color: var(--color-price);
+  font-size: var(--fs-sm);
+}
+.discount {
+  padding: 0 var(--space-1);
+  border: 1px solid currentColor;
+  border-radius: var(--radius-sm);
+  color: var(--color-price);
+  font-size: var(--fs-xs);
+}
+.listRow {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+
+/* purchase */
+.purchase {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+.fieldLabel {
+  padding: 0;
+  margin-bottom: var(--space-2);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+}
+.variants {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.variantList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.variant {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg);
+  font-size: var(--fs-sm);
+  cursor: pointer;
+}
+.variant:has(input:checked) {
+  border-color: var(--color-brand);
+  box-shadow: inset 0 0 0 1px var(--color-brand);
+  color: var(--color-brand);
+}
+.variant:has(input:focus-visible) {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+.variant[data-sold-out] {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  text-decoration: line-through;
+}
+.soldOutTag {
+  text-decoration: none;
+  font-size: var(--fs-xs);
+}
+.error {
+  margin: var(--space-2) 0 0;
+  color: var(--color-price);
+  font-size: var(--fs-sm);
+}
+
+.quantityRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+.quantityRow .fieldLabel {
+  margin: 0;
+}
+.stepper {
+  display: inline-flex;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+.stepButton {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  background: var(--color-bg-subtle);
+  font-size: var(--fs-lg);
+  cursor: pointer;
+}
+.stepButton:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.qtyInput {
+  width: 56px;
+  height: 44px;
+  border: 0;
+  text-align: center;
+  font-size: var(--fs-md);
+  appearance: textfield;
+}
+.qtyInput::-webkit-inner-spin-button,
+.qtyInput::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+.limit {
+  color: var(--color-text-muted);
+  font-size: var(--fs-sm);
+}
+
+/* Mobile: the add button sticks to the bottom of the viewport while the panel is in view. */
+.actions {
+  position: sticky;
+  bottom: 0;
+  padding-block: var(--space-2);
+  background: var(--color-bg);
+}
+@media (min-width: 768px) {
+  .actions {
+    position: static;
+    padding: 0;
+  }
+}
+.addButton {
+  width: 100%;
+  min-height: 48px;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: var(--color-brand);
+  color: var(--color-brand-contrast);
+  font-size: var(--fs-md);
+  font-weight: 700;
+  cursor: pointer;
+}
+.addButton:disabled {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.addButton[aria-busy='true'] {
+  cursor: progress;
+}
+
+/* not found */
+.notFound {
+  padding-block: var(--space-8);
+  text-align: center;
+}
+.homeLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+}
+
+/* skeleton */
+.skeleton {
+  border-radius: var(--radius-md);
+  background: var(--color-bg-subtle);
+}
+.skeletonImage {
+  aspect-ratio: 1;
+}
+.skeletonLine {
+  height: var(--space-8);
+}
