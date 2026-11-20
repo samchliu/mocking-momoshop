@@ -7,3 +7,4 @@ package-lock.json
 e2e/**/*-snapshots
 docs/_build
 .worktrees
+.vitest

@@ -38,3 +38,6 @@ node_modules/
 
 # Feature worktrees (scripts/worktree.sh)
 .worktrees
+
+# local test-runner output
+.vitest
