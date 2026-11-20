@@ -5,7 +5,8 @@
 set -euo pipefail
 name="${1:?usage: scripts/worktree.sh <name> [type=feat]}"
 type="${2:-feat}"
-root="$(git rev-parse --show-toplevel)"
+# always the main checkout, even when called from inside another worktree
+root="$(git worktree list --porcelain | sed -n '1s/^worktree //p')"
 dir="$root/.worktrees/$name"
 branch="$type/$name"
 

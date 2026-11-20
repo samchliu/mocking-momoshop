@@ -1,7 +1,7 @@
 import { sanitizeQuery } from './sanitize'
 
 describe('sanitizeQuery', () => {
-  it('trims and collapses whitespace', () => {
+  it('BR-002#R1 trims and collapses whitespace', () => {
     expect(sanitizeQuery('  iphone   15  ')).toBe('iphone 15')
   })
   it('strips angle brackets and control chars', () => {
