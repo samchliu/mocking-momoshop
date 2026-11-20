@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useRouteError } from 'react-router'
 import { track } from '@/lib/telemetry'
+import styles from './Page.module.css'
 
 /** Last-resort boundary for route-level failures (e.g. a lazy chunk failed to load after a deploy). */
 export function RouteErrorPage() {
@@ -12,7 +13,7 @@ export function RouteErrorPage() {
     if (import.meta.env.DEV) console.error(error)
   }, [error])
   return (
-    <main id="main" className="container" style={{ paddingBlock: 'var(--space-8)' }}>
+    <main id="main" className={`container ${styles.simple}`}>
       <h1>頁面發生錯誤</h1>
       <p>
         請

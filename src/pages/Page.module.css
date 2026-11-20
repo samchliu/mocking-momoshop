@@ -1,0 +1,4 @@
+/* Simple text pages (cart summary, 404, route error). */
+.simple {
+  padding-block: var(--space-8);
+}

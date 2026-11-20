@@ -1,0 +1,7 @@
+.banner {
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-text);
+  color: var(--color-bg);
+  text-align: center;
+  font-size: var(--fs-sm);
+}
