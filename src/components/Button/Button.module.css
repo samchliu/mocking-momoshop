@@ -1,0 +1,88 @@
+/* knowledge: ADR-006 — layout defaults at zero specificity so a caller's className always wins */
+:where(.root) {
+  width: auto;
+  min-width: 44px;
+  margin: 0;
+}
+:where(.fullWidth) {
+  width: 100%;
+}
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--space-4);
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.lg {
+  min-height: 48px;
+  font-size: var(--fs-lg);
+}
+
+/* primary */
+.primary {
+  color: var(--color-brand-contrast);
+  font-weight: 600;
+}
+.primary.md {
+  font-size: var(--fs-md);
+}
+.brand {
+  background: var(--color-brand);
+}
+.cart {
+  background: var(--color-cart);
+}
+.nav {
+  background: var(--color-nav);
+}
+
+/* secondary */
+.secondary {
+  border: 1px solid var(--color-brand);
+  background: var(--color-bg);
+  color: var(--color-brand);
+  font-weight: 400;
+}
+.secondary.md,
+.text.md {
+  font-size: var(--fs-sm);
+}
+.secondary:hover:not(:disabled) {
+  background: var(--color-bg-subtle);
+}
+
+/* text */
+.text {
+  padding: 0;
+  border-radius: 0;
+  color: var(--color-brand);
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+/* disabled / pending */
+.root:disabled {
+  cursor: not-allowed;
+}
+.root[aria-busy='true'] {
+  cursor: progress;
+}
+.primary:disabled {
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}
+.secondary:disabled {
+  border-color: var(--color-border);
+  background: var(--color-border);
+  color: var(--color-text-muted);
+}
+.text:disabled {
+  color: var(--color-text-muted);
+}

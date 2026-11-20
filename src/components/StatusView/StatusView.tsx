@@ -1,5 +1,7 @@
-import type { ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
 import { toUserMessage } from '@/api'
+import { useFocusReturn } from '@/hooks/useFocusReturn'
+import { Button } from '../Button/Button'
 import { Spinner } from '../Spinner/Spinner'
 import styles from './StatusView.module.css'
 
@@ -31,6 +33,9 @@ export function StatusView({
   emptyHint,
   children,
 }: Props) {
+  const retryRef = useRef<HTMLButtonElement>(null)
+  const captureRetryFocus = useFocusReturn(retryRef, isRetrying)
+
   if (isPending)
     return (
       pendingView ?? (
@@ -45,9 +50,17 @@ export function StatusView({
       <div className={styles.box} role="alert">
         <p className={styles.title}>{toUserMessage(error)}</p>
         {onRetry && (
-          <button type="button" className={styles.button} onClick={onRetry} disabled={isRetrying}>
+          <Button
+            ref={retryRef}
+            variant="secondary"
+            pending={isRetrying}
+            onClick={() => {
+              captureRetryFocus()
+              onRetry()
+            }}
+          >
             {isRetrying ? '重試中…' : '重試'}
-          </button>
+          </Button>
         )}
       </div>
     )

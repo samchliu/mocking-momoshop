@@ -40,6 +40,24 @@ describe('StatusView', () => {
     expect(screen.getByRole('button', { name: '重試中…' })).toBeDisabled()
   })
 
+  it('ADR-006 以鍵盤重試且重試失敗時，焦點回到「重試」按鈕', async () => {
+    const user = userEvent.setup()
+    const error = new ApiError('network', 'x')
+    const view = (isRetrying: boolean) => (
+      <StatusView isPending={false} error={error} onRetry={() => {}} isRetrying={isRetrying}>
+        content
+      </StatusView>
+    )
+    const { rerender } = render(view(false))
+    const button = screen.getByRole('button', { name: '重試' })
+    button.focus()
+    await user.keyboard('{Enter}')
+    rerender(view(true))
+    expect(screen.getByRole('button', { name: '重試中…' })).toHaveAttribute('aria-busy', 'true')
+    rerender(view(false))
+    expect(screen.getByRole('button', { name: '重試' })).toHaveFocus()
+  })
+
   it('shows the empty state with a hint', () => {
     render(
       <StatusView
