@@ -1,0 +1,9 @@
+dist
+coverage
+playwright-report
+test-results
+.lighthouseci
+package-lock.json
+e2e/**/*-snapshots
+docs/_build
+.worktrees

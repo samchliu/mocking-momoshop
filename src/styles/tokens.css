@@ -1,0 +1,41 @@
+/* Design tokens — single source of truth. Sections must use these, never hard-coded values. */
+:root {
+  /* color */
+  --color-brand: #2563eb;
+  --color-brand-contrast: #ffffff;
+  --color-text: #222222;
+  --color-text-muted: #666666;
+  --color-price: #dc2626;
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f5f5f5;
+  --color-border: #e5e5e5;
+  --color-focus: #1a73e8;
+
+  /* typography */
+  --font-sans: 'PingFang TC', 'Noto Sans TC', 'Microsoft JhengHei', system-ui, sans-serif;
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5rem;
+  --lh-tight: 1.25;
+  --lh-normal: 1.5;
+
+  /* spacing (4px scale) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+
+  /* shape / elevation */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --shadow-card: 0 1px 3px rgb(0 0 0 / 0.08);
+
+  /* layout */
+  --container-max: 1200px;
+  --header-h: 64px;
+}
+/* Breakpoints (use in media queries): mobile < 768px, tablet 768–1023px, desktop >= 1024px */
