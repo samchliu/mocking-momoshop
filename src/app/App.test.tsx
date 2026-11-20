@@ -11,7 +11,9 @@ describe('App shell', () => {
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('contentinfo')).toBeInTheDocument()
     expect(screen.getByRole('link', { name: '跳到主要內容' })).toHaveAttribute('href', '#main')
-    expect(screen.getByRole('searchbox', { name: '搜尋商品' })).toBeInTheDocument()
+    expect(screen.getByRole('search')).toContainElement(
+      screen.getByRole('searchbox', { name: '搜尋商品' }),
+    )
     expect(screen.getByRole('link', { name: '購物車，0 件商品' })).toBeInTheDocument()
   })
 
