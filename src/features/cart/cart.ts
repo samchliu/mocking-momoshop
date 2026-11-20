@@ -1,6 +1,8 @@
 // knowledge: BR-003 (cart rules) — pure functions, no React.
 import { arr, int, nullable, obj, str } from '@/lib/guard'
 
+export { clampQuantity, DEFAULT_PURCHASE_LIMIT } from '@/features/catalog/purchase'
+
 export interface CartLine {
   productId: string
   variantId: string | null
@@ -15,18 +17,6 @@ export type CartAction =
   | { type: 'clear' }
 
 export const emptyCart: CartState = { lines: [] }
-export const DEFAULT_PURCHASE_LIMIT = 5
-
-/** BR-003#R2, R3: quantity in [1, min(stock, limit)]; 0 means not purchasable (sold out). */
-export function clampQuantity(
-  value: number,
-  { stock, limit }: { stock: number; limit: number },
-): number {
-  const max = Math.min(stock, limit)
-  if (max <= 0) return 0
-  const n = Number.isFinite(value) ? Math.floor(value) : 1
-  return Math.min(max, Math.max(1, n))
-}
 
 const same = (l: CartLine, productId: string, variantId: string | null) =>
   l.productId === productId && l.variantId === variantId
