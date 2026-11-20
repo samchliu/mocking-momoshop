@@ -2,6 +2,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
 import { createBrowserRouter, RouterProvider } from 'react-router'
 import { ToastProvider } from '@/components'
+import { CartProvider } from '@/features/cart'
 import { createQueryClient } from './queryClient'
 import { routes } from './routes'
 
@@ -12,7 +13,9 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ToastProvider>
-        <RouterProvider router={router} />
+        <CartProvider>
+          <RouterProvider router={router} />
+        </CartProvider>
       </ToastProvider>
     </QueryClientProvider>
   )
