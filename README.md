@@ -13,6 +13,15 @@ npm install
 npm run dev                 # http://localhost:5173
 ```
 
+或用 Docker（不需要在本機安裝 Node）：
+
+```bash
+docker compose up --build   # http://localhost:5173，改原始碼會即時熱更新
+docker compose down         # 停止（加 -v 會一併清除容器內的 node_modules volume）
+```
+
+若檔案變更沒有觸發更新（部分 Windows／網路磁碟），改用 `VITE_POLLING=1 docker compose up`。
+
 不需要環境變數：資料來自 repo 內的 mock 後端（[ADR-003](docs/decisions/ADR-003.md)），不呼叫任何真實網站 API。
 
 | 試試看         | 網址                                                                                              |
