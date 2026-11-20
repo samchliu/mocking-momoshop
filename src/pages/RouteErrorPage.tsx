@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Link, useRouteError } from 'react-router'
+import { Button } from '@/components'
 import { track } from '@/lib/telemetry'
 import styles from './Page.module.css'
 
@@ -17,9 +18,9 @@ export function RouteErrorPage() {
       <h1>頁面發生錯誤</h1>
       <p>
         請
-        <button type="button" onClick={() => window.location.reload()}>
+        <Button variant="secondary" onClick={() => window.location.reload()}>
           重新整理
-        </button>
+        </Button>
         ，或<Link to="/">回到首頁</Link>。
       </p>
     </main>
