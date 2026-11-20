@@ -1,0 +1,115 @@
+.carousel {
+  position: relative;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--color-bg-subtle);
+}
+/* Reserve the 3:1 banner box before any image loads (CLS ≈ 0). */
+.viewport {
+  position: relative;
+  aspect-ratio: 3 / 1;
+}
+.slide {
+  position: absolute;
+  inset: 0;
+}
+.slide[hidden] {
+  display: none;
+}
+.link {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Control bar below the banner (fixed 44px, part of the reserved box): dots + pause never
+   cover the banner, even on narrow screens. Arrows overlay the banner's vertical centre. */
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 44px;
+}
+.arrow,
+.toggle {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--color-text);
+  color: var(--color-bg);
+  opacity: 0.75;
+  font-size: var(--fs-xl);
+  line-height: 1;
+  cursor: pointer;
+}
+.arrow:hover,
+.toggle:hover,
+.arrow:focus-visible,
+.toggle:focus-visible {
+  opacity: 1;
+}
+.arrow {
+  position: absolute;
+  top: calc((100% - 44px) / 2);
+  transform: translateY(-50%);
+}
+.prev {
+  left: var(--space-2);
+}
+.next {
+  right: var(--space-2);
+}
+.toggle {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background: none;
+  color: var(--color-text);
+  font-size: var(--fs-xs);
+}
+.dots {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+  display: flex;
+}
+/* 44×44 touch target, small visual dot. */
+.dot {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.dot::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-text-muted);
+  opacity: 0.5;
+}
+.dot[aria-current='true']::before {
+  background: var(--color-brand);
+  opacity: 1;
+}
+.arrow:focus-visible,
+.toggle:focus-visible,
+.dot:focus-visible {
+  outline: 3px solid var(--color-focus);
+  outline-offset: -3px;
+}
