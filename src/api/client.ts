@@ -1,4 +1,5 @@
 import { ApiError } from './errors'
+import { track } from '@/lib/telemetry'
 import { mockFetch } from './mock'
 
 /** Narrowing function that validates unknown JSON into a typed value (throws on mismatch). */
@@ -36,11 +37,34 @@ function anySignal(signals: AbortSignal[]): AbortSignal {
  * - Bounded: per-request timeout.
  * - Uniform errors: everything surfaces as ApiError.
  */
+/** Every request is measured once here (OPS-001): path, status, duration, error kind. */
 export async function request<T>(
   path: string,
   parse: Parser<T>,
   opts: RequestOptions = {},
 ): Promise<T> {
+  const started = performance.now()
+  const method = opts.method ?? 'GET'
+  const durationMs = () => Math.round(performance.now() - started)
+  try {
+    const data = await send(path, parse, opts)
+    track({ type: 'api', method, path, status: 200, durationMs: durationMs() })
+    return data
+  } catch (err) {
+    if (err instanceof ApiError && err.kind !== 'aborted')
+      track({
+        type: 'api',
+        method,
+        path,
+        status: err.status,
+        durationMs: durationMs(),
+        errorKind: err.kind,
+      })
+    throw err
+  }
+}
+
+async function send<T>(path: string, parse: Parser<T>, opts: RequestOptions): Promise<T> {
   const { method = 'GET', body, signal, timeoutMs = DEFAULT_TIMEOUT } = opts
 
   const timeout = AbortSignal.timeout(timeoutMs)

@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { ApiError, request, toUserMessage } from '@/api'
 import { useToast } from '@/components'
+import { track } from '@/lib/telemetry'
 import { parseCartAddResponse } from '@/features/catalog/parse'
 import { quantityInCart } from './cart'
 import { useCart } from './context'
@@ -27,8 +28,12 @@ export function useAddToCart() {
     mutationFn: (v: AddToCartInput & { inCart: number }) =>
       request('/api/cart/items', parseCartAddResponse, { method: 'POST', body: v }),
     onMutate: (v) => dispatch({ type: 'add', ...v }), // BR-003#R5 optimistic
-    onSuccess: () => toast.show('已加入購物車', 'success'),
+    onSuccess: () => {
+      track({ type: 'action', name: 'add_to_cart', outcome: 'success' })
+      toast.show('已加入購物車', 'success')
+    },
     onError: (err, v) => {
+      track({ type: 'action', name: 'add_to_cart', outcome: 'failure' })
       dispatch({
         type: 'revert',
         productId: v.productId,

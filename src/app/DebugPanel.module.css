@@ -1,0 +1,30 @@
+.panel {
+  position: fixed;
+  right: var(--space-2);
+  bottom: var(--space-2);
+  z-index: 1000;
+  width: min(360px, calc(100vw - var(--space-4)));
+  max-height: 40vh;
+  overflow: auto;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font:
+    var(--fs-xs) / 1.5 ui-monospace,
+    monospace;
+  box-shadow: var(--shadow-card);
+  opacity: 0.92;
+}
+.summary {
+  margin: 0 0 var(--space-1);
+  font-weight: 700;
+}
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.list li[data-error] {
+  color: var(--color-price);
+}
