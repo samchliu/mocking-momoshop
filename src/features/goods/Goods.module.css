@@ -107,7 +107,8 @@
 .priceBlock {
   padding: var(--space-3) var(--space-4);
   border-radius: var(--radius-md);
-  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border);
+  background: var(--color-bg); /* white like the real site; muted text on #f4f4f4 fails AA */
 }
 .priceRow,
 .listRow {
@@ -263,11 +264,11 @@
   width: 100%;
   min-height: 48px;
   border: 0;
-  border-radius: var(--radius-md);
-  background: var(--color-brand);
+  border-radius: 0;
+  background: var(--color-cart); /* the real site's 放入購物車 is blue; pink is 直接購買 */
   color: var(--color-brand-contrast);
-  font-size: var(--fs-md);
-  font-weight: 700;
+  font-size: var(--fs-lg);
+  font-weight: 600;
   cursor: pointer;
 }
 .addButton:disabled {

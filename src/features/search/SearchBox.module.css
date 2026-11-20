@@ -2,8 +2,8 @@
   display: flex;
   flex: 1;
   max-width: 560px;
-  border: 2px solid var(--color-brand);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--color-nav);
+  border-radius: var(--radius-pill);
   overflow: hidden;
 }
 .input {
@@ -22,8 +22,9 @@
   min-width: 64px;
   min-height: 44px;
   border: 0;
-  background: var(--color-brand);
+  background: var(--color-nav);
   color: var(--color-brand-contrast);
+  font-size: var(--fs-md);
   font-weight: 600;
   cursor: pointer;
 }

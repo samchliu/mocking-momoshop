@@ -9,7 +9,7 @@ html {
 body {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: var(--fs-md);
+  font-size: var(--fs-sm); /* 13px base, as measured */
   line-height: var(--lh-normal);
   color: var(--color-text);
   background: var(--color-bg);
