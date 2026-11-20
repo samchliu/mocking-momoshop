@@ -155,6 +155,8 @@ export function HomeFeed() {
             ref={listRef}
             aria-labelledby={TITLE_ID}
             className={styles.list}
+            // row count is runtime data: it sizes the virtualized list (REQ-005#AC8 no height jump)
+            // oxlint-disable-next-line react/forbid-dom-props
             style={{ '--rows': rowCount } as CSSProperties}
           >
             {rendered.map((i) => {
@@ -164,6 +166,8 @@ export function HomeFeed() {
                 <li
                   key={p.id}
                   className={styles.item}
+                  // grid position is runtime data: absolutely placed card in the virtualized list
+                  // oxlint-disable-next-line react/forbid-dom-props
                   style={
                     {
                       '--row': Math.floor(i / layout.cols),
