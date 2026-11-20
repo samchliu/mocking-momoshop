@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react'
 import { Outlet, ScrollRestoration } from 'react-router'
 import { OfflineBanner } from '@/components'
 import { useIsScrolled } from '@/hooks/useIsScrolled'
+import { useRouteTrail } from '@/hooks/useRouteTrail'
 import { SiteHeader } from './SiteHeader'
 
 const DebugPanel = lazy(() => import('./DebugPanel'))
@@ -12,6 +13,8 @@ const DEBUG =
 export function Layout() {
   // knowledge: REQ-005 版頭規格 — fixed header; scrollY > 0 collapses it to the first row.
   const collapsed = useIsScrolled()
+  // knowledge: REQ-005#AC11 — remembers the previous route (in memory, per page load)
+  useRouteTrail()
   return (
     <div className="site">
       <a className="skip-link" href="#main">

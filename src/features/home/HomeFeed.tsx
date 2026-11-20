@@ -6,12 +6,14 @@ import {
   useState,
   type CSSProperties,
 } from 'react'
+import { useNavigationType } from 'react-router'
 import { toUserMessage } from '@/api'
 import { ProductCard } from '@/features/catalog'
 import { useInView } from '@/hooks/useInView'
 import { useIntersecting } from '@/hooks/useIntersecting'
 import { useMediaQuery } from '@/hooks/useMediaQuery'
 import { useOnlineStatus } from '@/hooks/useOnlineStatus'
+import { lastRoute, reloadedSince } from '@/lib/routeTrail'
 import {
   anchorIndex,
   dedupeById,
@@ -20,6 +22,7 @@ import {
   visibleRows,
   WIDE_QUERY,
 } from './feedLayout'
+import { readFeedSnapshot, restorable, saveFeedSnapshot, type FeedSnapshot } from './feedSnapshot'
 import { useHomeFeed } from './useHomeFeed'
 import styles from './HomeFeed.module.css'
 
@@ -37,9 +40,24 @@ function readHeaderH() {
 /** REQ-005 首頁「推薦商品」: batch loading (AC5–AC7) + window-scroll virtualization (AC8–AC10). */
 export function HomeFeed() {
   const online = useOnlineStatus()
+  const navigationType = useNavigationType()
+  // knowledge: REQ-005#AC11 — decided once per home lifecycle, on mount. `lastRoute()` is still the
+  // page we came from: the route trail is updated in an effect, after this render.
+  const [restored] = useState<FeedSnapshot | null>(() => {
+    const s = readFeedSnapshot()
+    if (!s) return null
+    const ctx = {
+      navigationType,
+      from: lastRoute(),
+      now: Date.now(),
+      reloadedSinceSave: reloadedSince(s.savedAt),
+    }
+    return restorable(s, ctx) ? s : null
+  })
   // knowledge: REQ-005 商品流規格「第 1 批」 — requested when the reserved row enters the trigger zone
-  const { ref: startRef, inView: started } = useInView<HTMLDivElement>(TRIGGER_ZONE)
-  const feed = useHomeFeed(started && online)
+  const { ref: startRef, inView } = useInView<HTMLDivElement>(TRIGGER_ZONE)
+  const started = inView || restored !== null
+  const feed = useHomeFeed(started && online, restored?.pages)
   const { data, hasNextPage, isFetching, isError, fetchNextPage, refetch } = feed
 
   const items = dedupeById(data?.pages.flatMap((p) => p.items) ?? [])
@@ -105,6 +123,29 @@ export function HomeFeed() {
     }
     prev.current = { cols: layout.cols, anchor }
   }, [layout.cols, anchor, rowH, headerH])
+
+  // knowledge: REQ-005#AC11 — remember the loaded batches and the anchor product when leaving home.
+  const pagesRef = useRef(data?.pages)
+  pagesRef.current = data?.pages
+  useEffect(
+    () => () =>
+      saveFeedSnapshot({
+        savedAt: Date.now(),
+        anchor: prev.current.anchor,
+        pages: pagesRef.current ?? [],
+      }),
+    [],
+  )
+  // knowledge: REQ-005#AC11 — put the anchor product back just below the header. A passive effect runs
+  // after the router's own scroll restoration (a layout effect), so this position wins.
+  useEffect(() => {
+    const el = listRef.current
+    if (!restored || !el) return
+    const row = Math.floor(restored.anchor / layout.cols)
+    const listDocTop = el.getBoundingClientRect().top + window.scrollY
+    window.scrollTo(0, Math.floor(listDocTop + row * rowH - headerH))
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per home lifecycle
+  }, [])
 
   // knowledge: REQ-005#AC10 — the focused card is never unmounted. Native focusin/focusout on the list
   // (cards stay plain <li>s; the only interactive element in a card is its product link).
