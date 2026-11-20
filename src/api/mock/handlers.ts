@@ -1,6 +1,6 @@
 /** Mock endpoints implementing docs/api/API-001.md. Loaded lazily on the first request. */
 import { SORT_OPTIONS, type SortOption } from '@/features/catalog/types'
-import { buildHome, getProductDetail, PRODUCTS } from './data'
+import { buildHome, buildHomeFeed, getProductDetail, PRODUCTS } from './data'
 import { searchProducts } from './search'
 import { json, mock } from './transport'
 
@@ -59,3 +59,10 @@ mock('POST', /^\/api\/cart\/items$/, ({ body }) => {
 })
 
 mock('GET', /^\/api\/home$/, () => json(buildHome()))
+
+mock('GET', /^\/api\/home\/feed$/, ({ url }) => {
+  // CR-002 F1: the feed is requested by code in order, so an invalid page is a client bug → 400
+  const raw = url.searchParams.get('page') ?? ''
+  if (!/^[1-9]\d*$/.test(raw)) return json({ message: 'Invalid page' }, 400)
+  return json(buildHomeFeed(Number(raw)))
+})

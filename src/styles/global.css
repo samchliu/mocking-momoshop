@@ -5,6 +5,8 @@
 }
 html {
   -webkit-text-size-adjust: 100%;
+  /* knowledge: REQ-005 版頭規格「錨點預留」 — anchors and focus scrolling land below the collapsed header */
+  scroll-padding-top: var(--header-h);
 }
 body {
   margin: 0;
@@ -62,8 +64,16 @@ p {
 .site {
   min-height: 100vh;
   background: var(--color-bg-page);
+  /* knowledge: REQ-005 版頭規格「主內容預留」 — always the expanded height, so switching never shifts <main> */
+  padding-top: var(--header-h-expanded);
 }
+/* knowledge: REQ-005#AC1 — fixed to the viewport top on every Layout route */
 .site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: var(--z-header);
   background: var(--color-bg);
 }
 .site-header .container,

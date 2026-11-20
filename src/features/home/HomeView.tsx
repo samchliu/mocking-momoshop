@@ -1,5 +1,6 @@
 import { StatusView } from '@/components'
 import { FlashSale } from './FlashSale'
+import { HomeFeed } from './HomeFeed'
 import { HeroCarousel } from './HeroCarousel'
 import { HomeSections } from './HomeSections'
 import { HotKeywords } from './HotKeywords'
@@ -34,6 +35,8 @@ export function HomeView() {
           <HotKeywords keywords={data.hotKeywords} />
           <FlashSale sale={data.flashSale} />
           <HomeSections sections={data.sections} />
+          {/* knowledge: REQ-005 範圍 — after every product strip (added, not replacing REQ-003) */}
+          <HomeFeed />
         </div>
       )}
     </StatusView>
