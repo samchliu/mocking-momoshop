@@ -1,11 +1,8 @@
 import { useParams } from 'react-router'
+import { SearchResults } from '@/features/search'
 
-/** Placeholder — implemented on feat/search (REQ-001). */
+/** /search/:keyword (REQ-001, ADR-005). The page only assembles the search feature. */
 export default function SearchPage() {
   const { keyword = '' } = useParams()
-  return (
-    <div className="container">
-      <h1>「{keyword}」的搜尋結果</h1>
-    </div>
-  )
+  return <SearchResults keyword={keyword} />
 }
